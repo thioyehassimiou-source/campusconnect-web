@@ -4,15 +4,17 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function register(formData: FormData) {
-  const password = formData.get('password') as string
-  const firstName = formData.get('first-name') as string
-  const lastName = formData.get('last-name') as string
+  const rawStudentId = formData.get('student_id') as string
+  const studentId = rawStudentId ? rawStudentId.trim().toUpperCase() : ''
+  const firstName = formData.get('first_name') as string
+  const lastName = formData.get('last_name') as string
   const fullName = `${firstName} ${lastName}`.trim()
+  const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirm_password') as string
   const role = 'student' // Force student role for all registrations
   const department = formData.get('department') as string
   const faculty = formData.get('faculty') as string
   const level = formData.get('level') as string
-  const studentId = formData.get('student_id') as string
 
   // Validation INE
   const ineRegex = /^[A-Z]{4}\d{10}$/

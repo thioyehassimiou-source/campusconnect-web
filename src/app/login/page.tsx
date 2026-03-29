@@ -96,8 +96,8 @@ export default async function LoginPage({
                   name="student_id"
                   required
                   type="text"
-                  pattern="^[A-Z]{4}\d{10}$"
-                  title="Le matricule doit contenir 4 lettres majuscules suivies de 10 chiffres (ex: TTHA1585331656)"
+                  pattern="^\s*[a-zA-Z]{4}\d{10}\s*$"
+                  title="Le matricule doit contenir 4 lettres suivies de 10 chiffres (ex: TTHA1585331656)"
                   placeholder="Ex: TTHA1585331656"
                   autoComplete="off"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/10 transition-all font-body text-slate-900 placeholder:text-slate-300 uppercase"

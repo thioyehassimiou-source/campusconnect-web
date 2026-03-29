@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function login(formData: FormData) {
-  const studentId = formData.get('student_id') as string
+  const rawStudentId = formData.get('student_id') as string
+  const studentId = rawStudentId ? rawStudentId.trim().toUpperCase() : ''
   const password = formData.get('password') as string
 
   // Validation INE

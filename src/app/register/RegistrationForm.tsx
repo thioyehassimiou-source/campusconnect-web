@@ -116,8 +116,8 @@ export default function RegistrationForm({ faculties, departments, services, err
                 required
                 type="text"
                 autoComplete="off"
-                pattern="^[A-Z]{4}\d{10}$"
-                title="Le matricule doit contenir 4 lettres majuscules suivies de 10 chiffres (ex: TTHA1585331656)"
+                pattern="^\s*[a-zA-Z]{4}\d{10}\s*$"
+                title="Le matricule doit contenir 4 lettres suivies de 10 chiffres (ex: TTHA1585331656)"
                 placeholder="Ex: TTHA1585331656"
                 className="w-full pl-12 pr-4 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 uppercase focus:scale-[1.01]"
               />
