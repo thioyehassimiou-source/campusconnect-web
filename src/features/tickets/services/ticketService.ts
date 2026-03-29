@@ -13,7 +13,7 @@ export async function getTickets() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching tickets:', error)
+    console.warn('Error fetching tickets:', error)
     return []
   }
 
@@ -29,7 +29,7 @@ export async function getTicketActivities(ticketId: string) {
     .order('created_at', { ascending: true })
 
   if (error) {
-    console.error('Error fetching ticket activities:', error)
+    console.warn('Error fetching ticket activities:', error)
     return []
   }
 

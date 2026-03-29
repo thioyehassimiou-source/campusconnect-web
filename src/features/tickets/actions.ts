@@ -18,7 +18,7 @@ export async function createTicketReply(ticketId: string, content: string) {
     })
 
   if (error) {
-    console.error('Error creating ticket reply:', error)
+    console.warn('Error creating ticket reply:', error)
     throw new Error('Erreur lors de l\'envoi de la réponse')
   }
 
@@ -45,7 +45,7 @@ export async function createTicket(formData: FormData) {
     })
 
   if (error) {
-    console.error('Error creating ticket:', error)
+    console.warn('Error creating ticket:', error)
     throw new Error('Erreur lors de la création du ticket')
   }
 

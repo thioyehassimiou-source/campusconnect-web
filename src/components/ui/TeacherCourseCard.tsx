@@ -19,7 +19,7 @@ export function TeacherCourseCard({ code, title, schedule, image, progress, stud
   }
 
   return (
-    <div className="bg-surface-container-lowest p-5 rounded-xl flex items-center gap-6 group hover:bg-surface-container-low transition-colors duration-300 shadow-sm border border-transparent hover:border-outline-variant/20">
+    <div className="card-premium p-5 flex items-center gap-6 group interactive-element opacity-95 hover:opacity-100">
       <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
         <img 
           alt={title} 

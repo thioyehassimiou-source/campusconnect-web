@@ -40,10 +40,10 @@ export default function PaymentsClientPage({ initialSummary, initialTransactions
       {/* Financial Overview Bento */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2">
-          <FinancialBalanceCard summary={summary} />
+          <FinancialBalanceCard summary={summary as any} />
         </div>
         <div>
-          <FinancialStats summary={summary} />
+          <FinancialStats summary={summary as any} />
         </div>
       </div>
 
@@ -58,7 +58,7 @@ export default function PaymentsClientPage({ initialSummary, initialTransactions
           </div>
         </div>
         
-        <TransactionTable transactions={transactions} />
+        <TransactionTable transactions={transactions as any} />
       </section>
 
       {/* Secure Info & Support */}

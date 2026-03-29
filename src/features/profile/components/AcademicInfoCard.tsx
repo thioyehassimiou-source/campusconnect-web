@@ -1,8 +1,8 @@
 import { Landmark, GraduationCap, Calendar, History } from 'lucide-react'
-import { UserProfile } from '../types'
+import { Profile } from '../types'
 
 interface AcademicInfoCardProps {
-  profile: UserProfile
+  profile: Profile
 }
 
 export function AcademicInfoCard({ profile }: AcademicInfoCardProps) {

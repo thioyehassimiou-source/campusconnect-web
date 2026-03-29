@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Clock, Devices, ArrowUpRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock, MonitorSmartphone, ArrowUpRight } from 'lucide-react'
 import { DepartmentContact } from '../types'
 
 interface ITSupportCardProps {
@@ -11,7 +11,7 @@ export function ITSupportCard({ contact }: ITSupportCardProps) {
       <div className="xl:w-1/3">
         <div className="flex justify-between items-start mb-8">
           <div className="p-4 bg-primary text-white rounded-2xl shadow-xl shadow-primary/20">
-            <Devices className="h-8 w-8" />
+            <MonitorSmartphone className="h-8 w-8" />
           </div>
           <span className="text-[10px] font-black uppercase tracking-[0.2em] bg-primary/5 text-primary px-4 py-1.5 rounded-full border border-primary/20">
             Prioritaire
@@ -28,8 +28,8 @@ export function ITSupportCard({ contact }: ITSupportCardProps) {
       <div className="xl:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-10 xl:pl-10 border-t xl:border-t-0 xl:border-l border-outline-variant/15 pt-10 xl:pt-0">
         <div className="space-y-8">
           <div className="flex items-center space-x-5">
-            <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center font-black text-lg shadow-inner">
-              IT
+            <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center mb-6">
+              <MonitorSmartphone className="h-10 w-10 text-primary opacity-40" />
             </div>
             <div>
               <p className="text-base font-black text-on-surface tracking-tight tracking-tight">Équipe Support</p>

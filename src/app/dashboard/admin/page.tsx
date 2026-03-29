@@ -3,6 +3,8 @@ import { StatsCard } from '@/components/ui/StatsCard'
 import { AttendanceChart } from '@/components/ui/AttendanceChart'
 import { AdminActionsTable } from '@/components/ui/AdminActionsTable'
 import { SystemAlerts, QuickActionsGrid } from '@/components/ui/AdminShortcuts'
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import { 
   Users, 
   School, 
@@ -12,7 +14,18 @@ import {
 } from 'lucide-react'
 
 export default async function AdminDashboard() {
-  const { profile } = await requireRole(['admin'])
+  // Fetch real stats from Supabase - in parallel for performance
+  const supabase = await createClient()
+  
+  const [
+    { count: totalUsers },
+    { count: totalStudents },
+    { count: totalStaff }
+  ] = await Promise.all([
+    supabase.from('profiles').select('id', { count: 'exact', head: true }),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'student'),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).in('role', ['teacher', 'admin'])
+  ])
 
   return (
     <div className="max-w-[1400px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -23,12 +36,12 @@ export default async function AdminDashboard() {
           <p className="text-on-surface-variant font-medium mt-1">Données consolidées en temps réel pour l'administration.</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-5 py-2.5 bg-surface-container-low text-on-surface-variant rounded-xl text-sm font-bold hover:bg-surface-container-high transition-all shadow-sm">
+          <Link href="/admin/logs" className="px-5 py-2.5 bg-surface-container-low text-on-surface-variant rounded-xl text-sm font-bold hover:bg-surface-container-high transition-all shadow-sm">
             Exporter le rapport
-          </button>
-          <button className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+          </Link>
+          <Link href="/admin/users" className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
             Actions administratives
-          </button>
+          </Link>
         </div>
       </header>
 
@@ -36,21 +49,21 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <StatsCard 
           title="Total Utilisateurs" 
-          value="12,482" 
+          value={(totalUsers || 0).toLocaleString()} 
           icon={<Users className="h-6 w-6 text-primary" />}
           trend={{ value: 4.2, label: 'mois', isPositive: true }}
           shape="full"
         />
         <StatsCard 
           title="Étudiants Actifs" 
-          value="9,210" 
+          value={(totalStudents || 0).toLocaleString()} 
           icon={<School className="h-6 w-6 text-indigo-700" />}
           addon="Actif"
           shape="full"
         />
         <StatsCard 
           title="Personnel" 
-          value="846" 
+          value={(totalStaff || 0).toLocaleString()} 
           icon={<Badge className="h-6 w-6 text-slate-700" />}
           addon="Permanent"
           shape="full"

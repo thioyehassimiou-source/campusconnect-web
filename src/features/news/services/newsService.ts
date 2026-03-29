@@ -9,7 +9,7 @@ export async function getAnnouncements() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching announcements:', error)
+    console.warn('Error fetching announcements:', error)
     return []
   }
 

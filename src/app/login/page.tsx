@@ -9,6 +9,7 @@ export default async function LoginPage({
 }) {
   const params = await searchParams
   const error = params.error
+  const message = params.message
 
   return (
     <main className="flex min-h-screen">
@@ -45,12 +46,10 @@ export default async function LoginPage({
                 </div>
               ))}
             </div>
-            <span className="text-white/60 text-sm font-bold italic font-headline uppercase tracking-widest">Connecté à l'Univ-Labé</span>
+            <span className="text-white/60 text-sm font-bold italic font-headline uppercase tracking-widest">Connecté à CampusConnect</span>
           </div>
         </div>
-        <div className="relative z-10 text-white/40 text-[10px] font-black tracking-[0.3em] uppercase">
-          © 2026 Université de Labé • Powered by CampusConnect
-        </div>
+          © 2026 CampusConnect • Plateforme Ouverte
       </div>
 
       {/* Section Droite: Formulaire (Canvas) */}
@@ -66,24 +65,44 @@ export default async function LoginPage({
             <p className="text-slate-500 text-sm font-medium">Entrez vos identifiants pour accéder à votre portail.</p>
           </div>
 
-          {error && (
-            <div className="mb-8 rounded-2xl bg-red-50 p-4 border border-red-100">
-              <p className="text-xs font-bold text-red-600 font-medium">{String(error)}</p>
+          {message === 'check-email' && (
+            <div className="mb-8 rounded-2xl bg-primary/[0.03] p-5 border border-primary/10 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm">
+              <div className="bg-primary/10 p-2 rounded-full mt-0.5">
+                <Mail className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Presque fini !</p>
+                <p className="text-xs font-bold text-on-surface-variant/80 leading-relaxed">Veuillez consulter votre boîte mail pour confirmer votre inscription avant de vous connecter.</p>
+              </div>
             </div>
           )}
 
-          <form action={login} className="space-y-6">
+          {error && (
+            <div className="mb-8 rounded-2xl bg-red-50 p-4 border border-red-100 animate-in fade-in slide-in-from-top-4 duration-500">
+              <p className="text-xs font-bold text-red-600">
+                {error === 'account-exists' 
+                  ? "Cet e-mail est déjà utilisé. Si vous n'avez pas confirmé votre compte, contactez l'administration ou essayez de vous connecter."
+                  : String(error)
+                }
+              </p>
+            </div>
+          )}
+
+          <form action={login} className="space-y-6" autoComplete="off">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email universitaire</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Matricule (INE)</label>
               <div className="relative">
                 <input 
-                  name="email"
+                  name="student_id"
                   required
-                  type="email"
-                  placeholder="nom@univ-campus.fr"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/10 transition-all font-body text-slate-900 placeholder:text-slate-300"
+                  type="text"
+                  pattern="^[A-Z]{4}\d{10}$"
+                  title="Le matricule doit contenir 4 lettres majuscules suivies de 10 chiffres (ex: TTHA1585331656)"
+                  placeholder="Ex: TTHA1585331656"
+                  autoComplete="off"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/10 transition-all font-body text-slate-900 placeholder:text-slate-300 uppercase"
                 />
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
               </div>
             </div>
 
@@ -98,6 +117,7 @@ export default async function LoginPage({
                   required
                   type="password"
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   className="w-full pl-12 pr-12 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/10 transition-all font-body text-slate-900 placeholder:text-slate-300"
                 />
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />

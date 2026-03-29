@@ -1,7 +1,7 @@
-import { UserProfile } from '../types'
+import { Profile } from '../types'
 
 interface PersonalInfoFormProps {
-  profile: UserProfile
+  profile: Profile
 }
 
 export function PersonalInfoForm({ profile }: PersonalInfoFormProps) {

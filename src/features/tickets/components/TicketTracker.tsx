@@ -22,13 +22,12 @@ export default function TicketTracker({ initialTickets, initialActivities }: Tic
   const activities = initialActivities.length > 0 ? initialActivities : mockTicketActivity
 
   const handleReply = async (text: string) => {
-    if (!text.trim()) return
-
+    if (!text.trim() || !activeTicket) return
     try {
       await createTicketReply(activeTicket.id, text)
       router.refresh()
     } catch (error) {
-      console.error('Failed to send reply:', error)
+      console.warn('Failed to send reply:', error)
       alert('Erreur lors de l\'envoi de la réponse')
     }
   }
@@ -81,7 +80,7 @@ export default function TicketTracker({ initialTickets, initialActivities }: Tic
       {/* Main Container: Detail View */}
       <TicketDetailView 
         ticket={activeTicket} 
-        activities={activities.filter(a => a.ticketId === activeTicket.id)}
+        activities={activities.filter((a: any) => a.ticketId === activeTicket.id)}
         onReply={handleReply}
       />
     </div>

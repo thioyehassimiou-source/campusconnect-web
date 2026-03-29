@@ -8,7 +8,7 @@ interface HomeworkCardProps {
 
 export function HomeworkCard({ title, deadline, type }: HomeworkCardProps) {
   return (
-    <div className="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between group shadow-sm hover:shadow-md transition-all">
+    <div className="card-premium p-6 flex items-center justify-between group shadow-sm transition-all duration-300">
       <div className="flex items-center gap-4">
         <div className={`
           w-12 h-12 rounded-full flex items-center justify-center

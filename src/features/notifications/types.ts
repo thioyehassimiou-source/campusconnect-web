@@ -1,14 +1,21 @@
-export type NotificationStatus = 'unread' | 'read' | 'archived'
-export type NotificationCategory = 'school' | 'assignment' | 'campaign' | 'mail' | 'grade'
+export interface AppNotification {
+  id: string
+  user_id: string
+  title: string
+  content: string
+  type: 'message' | 'announcement' | 'grade' | 'info'
+  link?: string
+  is_read: boolean
+  created_at: string
+}
 
 export interface NotificationItem {
   id: string
   title: string
   description: string
-  timestamp: string
-  categoryName: string
-  categoryIcon: string
+  status: 'read' | 'unread'
+  categoryIcon: 'assignment' | 'campaign' | 'mail' | 'school' | 'info'
   categoryColor: string
-  status: NotificationStatus
-  dateGroup: 'Aujourd\'hui' | 'Hier' | 'Plus ancien'
+  categoryName: string
+  timestamp: string
 }

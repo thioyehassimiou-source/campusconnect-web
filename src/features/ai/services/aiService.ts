@@ -12,7 +12,7 @@ export async function getAIHistory() {
     .order('created_at', { ascending: true })
 
   if (error) {
-    console.error('Error fetching AI history:', error)
+    console.warn('Error fetching AI history:', error)
     return []
   }
 

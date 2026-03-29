@@ -15,12 +15,12 @@ export default function ForumClientPage({ initialThreads }: ForumClientPageProps
   const [activeCategory, setActiveCategory] = useState('All')
   
   // Ensure we have threads with the 'category' property for filtering
-  const processedThreads = (initialThreads.length > 0 ? initialThreads : mockForumThreads).map(t => ({
+  const processedThreads = (initialThreads.length > 0 ? initialThreads : mockForumThreads).map((t: any) => ({
     ...t,
     category: t.category || t.categoryName // Fallback for filtering
   }))
 
-  const filteredThreads = processedThreads.filter(t => 
+  const filteredThreads = processedThreads.filter((t: any) => 
     activeCategory === 'All' || t.category === activeCategory || t.categoryName === activeCategory
   )
 
@@ -34,7 +34,7 @@ export default function ForumClientPage({ initialThreads }: ForumClientPageProps
     <div className="flex gap-10 h-[calc(100vh-140px)] w-full -m-10 p-10 overflow-hidden bg-background">
       {/* Internal Navigation: Categories */}
       <ForumCategoryList 
-        categories={mockForumCategories.map(c => ({ ...c, isActive: activeCategory === c.name }))} 
+        categories={mockForumCategories.map((c: any) => ({ ...c, isActive: activeCategory === c.name }))} 
       />
 
       {/* Main Feed: Discussions */}
@@ -47,7 +47,7 @@ export default function ForumClientPage({ initialThreads }: ForumClientPageProps
         </div>
 
         <div className="space-y-8">
-          {filteredThreads.map(thread => (
+          {filteredThreads.map((thread: any) => (
             <ThreadCard key={thread.id} thread={thread} />
           ))}
           {filteredThreads.length === 0 && (

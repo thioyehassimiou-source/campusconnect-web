@@ -9,7 +9,7 @@ export async function getCourses() {
     .order('title', { ascending: true })
 
   if (error) {
-    console.error('Error fetching courses:', error)
+    console.warn('Error fetching courses:', error)
     return []
   }
 

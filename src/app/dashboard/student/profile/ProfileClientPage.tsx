@@ -2,15 +2,15 @@
 
 import { useState } from 'react'
 import { User, Mail, Shield, Building, Edit3, Camera, Check } from 'lucide-react'
-import { mockProfile, mockStatus, mockConnectedServices } from '@/features/profile/mockData'
-import { UserProfile, ConnectedService } from '@/features/profile/types'
+import { mockStatus, mockConnectedServices } from '@/features/profile/mockData'
+import { ConnectedService } from '@/features/profile/types'
 
 interface ProfileClientPageProps {
-  initialProfile: UserProfile | null
+  initialProfile: any | null
 }
 
 export default function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
-  const profile = initialProfile || mockProfile
+  const profile = initialProfile || {}
   const [isEditing, setIsEditing] = useState(false)
 
   return (
@@ -21,8 +21,12 @@ export default function ProfileClientPage({ initialProfile }: ProfileClientPageP
 
       <div className="px-12 flex flex-col md:flex-row items-end gap-10 mb-16 relative z-10">
         <div className="relative group">
-          <div className="w-48 h-48 rounded-[3rem] border-8 border-white overflow-hidden shadow-2xl bg-white group-hover:scale-105 transition-transform duration-500">
-            <img src={profile.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400"} alt="Profile" className="w-full h-full object-cover" />
+          <div className="w-48 h-48 rounded-[3rem] border-8 border-white overflow-hidden shadow-2xl bg-white group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+            <img 
+              src={profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.full_name || 'E')}&background=020617&color=fff&size=200&font-size=0.4`} 
+              alt="Profile" 
+              className="w-full h-full object-cover" 
+            />
           </div>
           <button className="absolute bottom-2 right-2 p-4 bg-primary text-white rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all">
             <Camera className="h-5 w-5" />
@@ -32,16 +36,16 @@ export default function ProfileClientPage({ initialProfile }: ProfileClientPageP
         <div className="flex-1 pb-4 flex justify-between items-end w-full">
           <div>
             <h2 className="text-5xl font-black font-headline text-on-surface tracking-tighter leading-tight mb-2">
-              {profile.firstName} {profile.lastName}
+              {profile.full_name || 'Étudiant'}
             </h2>
             <div className="flex items-center gap-6">
               <span className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-widest bg-primary/10 px-4 py-2 rounded-xl">
                 <Shield className="h-4 w-4" />
-                Étudiant
+                {profile.role === 'teacher' ? 'Enseignant' : profile.role === 'admin' ? 'Administrateur' : 'Étudiant'}
               </span>
               <span className="flex items-center gap-2 text-on-surface-variant/60 font-black text-xs uppercase tracking-widest">
                 <Building className="h-4 w-4" />
-                {profile.faculty}
+                {profile.faculty || profile.department || 'Université de Labé'}
               </span>
             </div>
           </div>
@@ -61,17 +65,19 @@ export default function ProfileClientPage({ initialProfile }: ProfileClientPageP
             <h3 className="text-2xl font-black font-headline text-primary mb-8 tracking-tight">Informations Personnelles</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-2">Email</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-2">Email Universitaire</label>
                 <div className="bg-surface-container-low/50 p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/10">
                   <Mail className="h-5 w-5 text-primary/40" />
-                  <span className="font-bold text-on-surface opacity-70">{profile.email}</span>
+                  <span className="font-bold text-on-surface opacity-70">
+                    {profile.matricule ? `${profile.matricule.toLowerCase()}@campusconnect.local` : (profile.email || 'Non défini')}
+                  </span>
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-2">Identifiant</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-2">Matricule (INE)</label>
                 <div className="bg-surface-container-low/50 p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/10">
                   <User className="h-5 w-5 text-primary/40" />
-                  <span className="font-bold text-on-surface opacity-70">#{profile.id.substring(0, 8).toUpperCase()}</span>
+                  <span className="font-bold text-on-surface opacity-70 uppercase tracking-widest">{profile.matricule || '???'}</span>
                 </div>
               </div>
             </div>

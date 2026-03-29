@@ -4,19 +4,27 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function register(formData: FormData) {
-  const email = formData.get('email') as string
   const password = formData.get('password') as string
   const firstName = formData.get('first-name') as string
   const lastName = formData.get('last-name') as string
   const fullName = `${firstName} ${lastName}`.trim()
-  const role = formData.get('role') as string
+  const role = 'student' // Force student role for all registrations
   const department = formData.get('department') as string
   const faculty = formData.get('faculty') as string
   const level = formData.get('level') as string
-  const service = formData.get('service') as string
-  const studentId = formData.get('email') as string 
+  const studentId = formData.get('student_id') as string
+
+  // Validation INE
+  const ineRegex = /^[A-Z]{4}\d{10}$/
+  if (!studentId || !ineRegex.test(studentId)) {
+    return redirect(`/register?error=${encodeURIComponent('Le matricule (INE) doit contenir 4 lettres majuscules suivies de 10 chiffres.')}`)
+  }
+
+  // Generate internal email
+  const email = `${studentId.toLowerCase()}@campusconnect.local`
 
   const supabase = await createClient()
+  const requireEmailConfirmation = process.env.REQUIRE_EMAIL_CONFIRMATION === 'true'
 
   const { data, error: signUpError } = await supabase.auth.signUp({
     email,
@@ -30,30 +38,35 @@ export async function register(formData: FormData) {
   })
 
   if (signUpError) {
+    if (signUpError.message.includes('already registered')) {
+      return redirect('/login?error=account-exists')
+    }
     return redirect(`/register?error=${encodeURIComponent(signUpError.message)}`)
   }
 
   if (data.user) {
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({
+      .upsert({
+        id: data.user.id,
         full_name: fullName,
         role: role,
-        student_id: studentId,
+        matricule: studentId,
+        student_id: studentId, // Keeping this field as backup if it was used elsewhere
         faculty: faculty,
         department: department,
         level: level,
-        service: service
+        updated_at: new Date().toISOString()
       })
-      .eq('id', data.user.id)
 
     if (profileError) {
-       console.error('Profile update error:', profileError)
+      console.warn('Profile creation/update failed:', profileError)
     }
   }
 
-  const roleRedirect = role.toLowerCase() === 'admin' ? 'admin' : 
-                       role.toLowerCase() === 'teacher' ? 'teacher' : 'student'
-  
-  redirect(`/dashboard/${roleRedirect}`)
+  if (requireEmailConfirmation) {
+    return redirect('/login?message=check-email')
+  }
+
+  redirect(`/dashboard/student`)
 }

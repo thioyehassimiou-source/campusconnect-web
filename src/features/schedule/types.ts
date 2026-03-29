@@ -9,6 +9,7 @@ export interface ScheduleEvent {
   day: number       // 0-4 (Mon-Fri)
   location?: string
   instructor?: string
+  isCurrent?: boolean
 }
 
 export interface DayInfo {

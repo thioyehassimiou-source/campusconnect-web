@@ -1,25 +1,30 @@
 export interface Conversation {
   id: string
-  name: string
-  avatar: string
-  lastMessage: string
-  lastMessageTime: string
-  isOnline: boolean
-  isGroup: boolean
-  role?: 'student' | 'professor' | 'staff'
+  name: string | null
+  createdAt: string
+  updatedAt: string
+  lastMessage?: string
+  lastMessageTime?: string
+  avatar?: string
+  isOnline?: boolean
   unreadCount?: number
+}
+
+export interface Participant {
+  conversationId: string
+  userId: string
+  joinedAt: string
+  user?: {
+    fullName: string
+    avatarUrl: string
+  }
 }
 
 export interface Message {
   id: string
+  conversationId: string
   senderId: string
   content: string
-  timestamp: string
-  isSent: boolean
-  attachment?: {
-    name: string
-    size: string
-    type: 'pdf' | 'image' | 'doc'
-    url: string
-  }
+  createdAt: string
+  senderName?: string
 }

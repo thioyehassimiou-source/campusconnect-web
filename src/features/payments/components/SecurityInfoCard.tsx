@@ -1,4 +1,4 @@
-import { CreditCard, Landmark, Contactless as ContactlessIcon } from 'lucide-react'
+import { CreditCard, Landmark, ShieldCheck, Lock, Zap } from 'lucide-react'
 
 export function SecurityInfoCard() {
   return (

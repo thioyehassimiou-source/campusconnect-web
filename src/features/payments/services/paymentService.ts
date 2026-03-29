@@ -13,7 +13,7 @@ export async function getFinancialSummary() {
     .single()
 
   if (error) {
-    console.error('Error fetching financial summary:', error)
+    console.warn('Error fetching financial summary:', error)
     return null
   }
 
@@ -32,7 +32,7 @@ export async function getTransactions() {
     .order('date', { ascending: false })
 
   if (error) {
-    console.error('Error fetching transactions:', error)
+    console.warn('Error fetching transactions:', error)
     return []
   }
 

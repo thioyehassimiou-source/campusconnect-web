@@ -13,7 +13,7 @@ export default function NewsClientPage({ initialAnnouncements }: NewsClientPageP
   const [activeTag, setActiveTag] = useState('Tous')
   const announcements = initialAnnouncements.length > 0 ? initialAnnouncements : mockAnnouncements
 
-  const filteredAnnouncements = announcements.filter(a => 
+  const filteredAnnouncements = announcements.filter((a: any) => 
     activeTag === 'Tous' || (a.tags && a.tags.includes(`#${activeTag}`)) || a.category === activeTag
   )
 
@@ -97,7 +97,7 @@ export default function NewsClientPage({ initialAnnouncements }: NewsClientPageP
           </div>
 
           <div className="space-y-8">
-            {filteredAnnouncements.slice(1).map((news) => (
+            {filteredAnnouncements.slice(1).map((news: any) => (
               <article key={news.id} className="bg-white rounded-[2.5rem] p-8 flex gap-8 border border-outline-variant/5 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all group cursor-pointer animate-in slide-in-from-bottom-6">
                 <div className="w-48 h-48 rounded-3xl overflow-hidden shrink-0">
                   <img src={news.image || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={news.title} />

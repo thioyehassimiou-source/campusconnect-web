@@ -15,7 +15,7 @@ export async function getResources(courseId?: string) {
   const { data, error } = await query.order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching resources:', error)
+    console.warn('Error fetching resources:', error)
     return []
   }
 

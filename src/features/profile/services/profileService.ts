@@ -13,7 +13,7 @@ export async function getProfile() {
     .single()
 
   if (error) {
-    console.error('Error fetching profile:', error)
+    console.warn('Error fetching profile:', error)
     return null
   }
 

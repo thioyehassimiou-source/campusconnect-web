@@ -12,27 +12,27 @@ export default async function RegisterPage({
 
   const supabase = await createClient()
   
-  // Fetch faculties (remote DB uses 'nom' not 'name')
+  // Fetch faculties (priority to 'nom' over 'name')
   const { data: faculties, error: facError } = await supabase
     .from('faculties')
     .select('id, nom')
-    .order('nom')
+    .order('id')
 
-  // Fetch departments (remote DB uses 'nom', 'faculty_id' as integer)
+  // Fetch departments (priority to 'nom' over 'name')
   const { data: departments, error: depError } = await supabase
     .from('departments')
     .select('id, nom, faculty_id')
-    .order('nom')
+    .order('id')
 
-  // Fetch services (remote DB uses 'nom')
+  // Fetch services (priority to 'nom' over 'name')
   const { data: services, error: servError } = await supabase
     .from('services')
     .select('id, nom')
-    .order('nom')
+    .order('id')
 
-  if (facError) console.error('Faculties error:', facError.message)
-  if (depError) console.error('Departments error:', depError.message)
-  if (servError) console.error('Services error:', servError.message)
+  if (facError) console.warn('Faculties error:', facError.message)
+  if (depError) console.warn('Departments error:', depError.message)
+  if (servError) console.warn('Services error:', servError.message)
 
   return (
     <main className="flex min-h-screen">

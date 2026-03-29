@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 }
 
 import { ToastProvider } from '@/components/ui/Toast'
+import { ThemeProvider } from '@/components/theme/ThemeProvider'
 
 export default function RootLayout({
   children,
@@ -30,9 +31,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col font-body">
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

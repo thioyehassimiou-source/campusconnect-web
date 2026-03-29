@@ -12,7 +12,7 @@ export async function getNotifications() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching notifications:', error)
+    console.warn('Error fetching notifications:', error)
     return []
   }
 

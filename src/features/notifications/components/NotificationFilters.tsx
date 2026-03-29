@@ -1,4 +1,4 @@
-import { School, Assignment, Campaign } from 'lucide-react'
+import { Bell, Check, ClipboardList, Megaphone, School } from 'lucide-react'
 
 export function NotificationFilters() {
   return (
@@ -16,10 +16,10 @@ export function NotificationFilters() {
             <School className="h-5 w-5" />
           </button>
           <button className="p-3.5 bg-surface-container-low text-primary rounded-2xl hover:bg-primary hover:text-white transition-all shadow-sm" title="Devoirs">
-            <Assignment className="h-5 w-5" />
+            <ClipboardList className="h-5 w-5" />
           </button>
           <button className="p-3.5 bg-surface-container-low text-primary rounded-2xl hover:bg-primary hover:text-white transition-all shadow-sm" title="Annonces">
-            <Campaign className="h-5 w-5" />
+            <Megaphone className="h-5 w-5" />
           </button>
         </div>
       </div>

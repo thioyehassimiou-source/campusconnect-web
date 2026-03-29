@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   --color-surface-bright: #f7f9fb;
   --color-error: #ba1a1a;
   --color-tertiary: #321b00;
-  --color-on-surface-variant: #43474e;
+  --color-on-surface-variant: #4b5563; /* gray-600 */
   --color-error-container: #ffdad6;
   --color-surface-variant: #e0e3e5;
   --color-surface-container-high: #e6e8ea;
@@ -14,7 +14,7 @@
   --color-on-error-container: #93000a;
   --color-on-tertiary: #ffffff;
   --color-inverse-surface: #2d3133;
-  --color-on-surface: #191c1e;
+  --color-on-surface: #111827; /* gray-900 */
   --color-on-secondary: #ffffff;
   --color-tertiary-fixed: #ffddba;
   --color-secondary-container: #d0e1fb;
@@ -27,14 +27,20 @@
   --color-primary-container: #002991;
   --color-tertiary-container: #4f2e00;
   --color-surface-dim: #d8dadc;
-  --color-background: #f7f9fb;
-  --color-on-primary-fixed: #001453;
-  --color-inverse-on-surface: #eff1f3;
-  --color-surface-container-low: #f2f4f6;
-  --color-outline-variant: #c4c6cf;
+  --color-surface-bright: #f0f4ff;
+  --color-surface: #f0f4ff; /* Subtle light blue surface */
+  --color-background: #ecf2ff; /* Subtle light blue background */
+  --color-on-surface: #111827; /* gray-900 */
+  --color-on-surface-variant: #4b5563; /* gray-600 */
   --color-outline: #74777f;
+  --color-outline-variant: #c4c6cf;
+  --color-on-primary-fixed: #001453;
   --color-on-primary-fixed-variant: #173bab;
-  --color-surface-container: #eceef0;
+  --color-inverse-on-surface: #eff1f3;
+  --color-surface-container-low: #eef2ff;
+  --color-surface-container: #e0e7ff;
+  --color-surface-container-high: #dbeafe;
+  --color-surface-container-highest: #d1e2ff;
   --color-primary-fixed-dim: #b8c4ff;
   --color-on-background: #191c1e;
   --color-secondary-fixed-dim: #b7c8e1;
@@ -45,18 +51,125 @@
   --color-secondary: #505f76;
   --color-on-tertiary-container: #c6955e;
   --color-secondary-fixed: #d3e4fe;
-  --color-surface: #f7f9fb;
   --color-on-secondary-container: #54647a;
   --color-on-tertiary-fixed: #2b1700;
 
   --font-headline: var(--font-manrope);
   --font-body: var(--font-inter);
   --font-label: var(--font-inter);
+
+  --radius-premium: 1.5rem;
+  --radius-standard: 1rem;
+  --radius-button: 2rem;
+
+  --shadow-premium-sm: 0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.01);
+  --shadow-premium-md: 0 4px 20px -5px rgba(0,0,0,0.05), 0 2px 10px -2px rgba(0,0,0,0.02);
+  --shadow-premium-lg: 0 20px 40px -12px rgba(0,0,0,0.08), 0 8px 16px -6px rgba(0,0,0,0.04);
+  --shadow-premium-layered: 0 1px 1px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02), 0 4px 4px rgba(0,0,0,0.02), 0 8px 8px rgba(0,0,0,0.02), 0 16px 16px rgba(0,0,0,0.02);
+}
+
+/* Refined Dark mode color overrides (Avoiding pure black) */
+.dark {
+  --color-background: #000821; /* Ultra deep blue instead of black */
+  --color-surface: #000c32;    /* Deep blue surface */
+  --color-on-surface: #f9fafb; 
+  --color-surface-container-lowest: #000514;
+  --color-surface-container-low: #000927;
+  --color-surface-container: #000f38;
+  --color-surface-container-high: #001242;
+  --color-surface-container-highest: #001650;
+  --color-on-surface-variant: #94a3b8; /* slate-400 for better blue harmony */
+  --color-outline: #1e293b;
+  --color-outline-variant: #0f172a;
+  --color-primary: #818cf8; /* Lighter indigo-blue for dark mode contrast */
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1e1b4b;
+  --color-on-primary-container: #e0e7ff;
+  --color-surface-bright: #001a5e;
+  --color-surface-dim: #000821;
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .glass {
+    background-color: rgb(255 255 255 / 0.7);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgb(255 255 255 / 0.2);
+  }
+
+  .dark .glass {
+    background-color: var(--color-surface) / 0.7;
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgb(255 255 255 / 0.05);
+  }
+
+  .card-premium {
+    background-color: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 10%, transparent);
+    box-shadow: var(--shadow-premium-md);
+    border-radius: var(--radius-premium);
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-premium:hover {
+    transform: translateY(-0.25rem);
+    box-shadow: var(--shadow-premium-lg);
+    border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+
+  .interactive-element {
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .interactive-element:hover {
+    filter: brightness(1.10);
+  }
+
+  .interactive-element:active {
+    transform: scale(0.95);
+  }
+
+  .entrance-up {
+    animation: fade-in-up 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .entrance-right {
+    animation: fade-in-right 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-current border-t-transparent w-4 h-4;
+  }
 }
 
 @layer base {
-  body {
-    background-color: var(--color-surface);
-    color: var(--color-on-surface);
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-right {
+    from { opacity: 0; transform: translateX(-16px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  html { 
+    scroll-behavior: smooth; 
+    font-size: 106.25%; /* Increases all rems globally by 6.25% to make fonts larger */
+  }
+  body { 
+    background-color: var(--color-background); 
+    color: var(--color-on-surface); 
+    transition: background-color 300ms, color 300ms;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    letter-spacing: -0.025em;
   }
 }

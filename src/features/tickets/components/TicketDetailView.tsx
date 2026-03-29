@@ -1,4 +1,4 @@
-import { MoreVertical, Calendar, Category, PriorityHigh, Paperclip, Image as ImageIcon, Smile, Send } from 'lucide-react'
+import { MoreVertical, Calendar, Tag, AlertCircle, Paperclip, Image as ImageIcon, Smile, Send } from 'lucide-react'
 import { Ticket, TicketActivity } from '../types'
 import { ActivityLog } from './ActivityLog'
 
@@ -38,7 +38,7 @@ export function TicketDetailView({ ticket, activities, onReply }: TicketDetailVi
               {ticket.category}
             </span>
             <span className="flex items-center gap-3">
-              <PriorityHigh className="h-4 w-4 opacity-40" />
+              <AlertCircle className="h-4 w-4 opacity-40" />
               Priorité : {ticket.priority}
             </span>
           </div>

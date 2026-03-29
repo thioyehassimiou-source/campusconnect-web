@@ -1,7 +1,6 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { revalidatePath } from 'next/cache'
 
 export async function bookRoom(roomId: string, startTime: string, endTime: string, purpose: string) {
   const supabase = createClient()

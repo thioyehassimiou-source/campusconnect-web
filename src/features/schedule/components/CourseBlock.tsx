@@ -27,9 +27,14 @@ export function CourseBlock({ event, hourHeight, startHour }: CourseBlockProps) 
 
   return (
     <div 
-      className={`absolute left-2 right-2 rounded-xl p-3 border-l-4 transition-all cursor-pointer shadow-sm hover:shadow-md group z-5 ${getStyles(event.type)}`}
+      className={`absolute left-2 right-2 rounded-xl p-3 border-l-4 transition-all cursor-pointer shadow-sm hover:shadow-md group ${event.isCurrent ? 'z-30 ring-2 ring-primary ring-offset-2 animate-pulse-subtle scale-[1.02]' : 'z-5'} ${getStyles(event.type)}`}
       style={{ top: `${top}px`, height: `${height}px` }}
     >
+      {event.isCurrent && (
+        <div className="absolute -top-2.5 -right-2.5 bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full shadow-lg z-40 transform rotate-12">
+          EN COURS
+        </div>
+      )}
       <div className="flex flex-col h-full justify-between">
         <div>
           <span className="text-[9px] font-black uppercase tracking-widest opacity-80 mb-1 block">

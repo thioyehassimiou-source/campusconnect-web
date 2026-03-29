@@ -19,7 +19,7 @@ export default function AcademicDepartmentsPage() {
 
       {/* Grid Canvas */}
       <div className={`grid gap-10 ${view === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-        {mockDepartments.map((dept) => (
+        {mockDepartments.map((dept: any) => (
           <DepartmentCard key={dept.id} department={dept} />
         ))}
       </div>

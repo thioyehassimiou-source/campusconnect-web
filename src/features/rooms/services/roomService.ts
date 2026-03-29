@@ -9,7 +9,7 @@ export async function getRooms() {
     .order('name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching rooms:', error)
+    console.warn('Error fetching rooms:', error)
     return []
   }
 
@@ -24,7 +24,7 @@ export async function getRoomBookings(roomId: string) {
     .eq('room_id', roomId)
 
   if (error) {
-    console.error('Error fetching room bookings:', error)
+    console.warn('Error fetching room bookings:', error)
     return []
   }
 

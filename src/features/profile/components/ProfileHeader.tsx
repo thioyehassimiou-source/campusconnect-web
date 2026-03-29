@@ -1,8 +1,8 @@
 import { Edit3, GraduationCap } from 'lucide-react'
-import { UserProfile } from '../types'
+import { Profile } from '../types'
 
 interface ProfileHeaderProps {
-  profile: UserProfile
+  profile: Profile
 }
 
 export function ProfileHeader({ profile }: ProfileHeaderProps) {

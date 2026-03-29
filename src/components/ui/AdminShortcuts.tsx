@@ -1,4 +1,5 @@
 import { AlertTriangle, Info, UserPlus, FileText, Calendar, Lock } from 'lucide-react'
+import Link from 'next/link'
 
 export function SystemAlerts() {
   return (
@@ -32,10 +33,10 @@ export function SystemAlerts() {
 
 export function QuickActionsGrid() {
   const actions = [
-    { label: 'Nouvel Étudiant', icon: UserPlus },
-    { label: 'Générer Rapport', icon: FileText },
-    { label: 'Planning Global', icon: Calendar },
-    { label: 'Sécurité', icon: Lock },
+    { label: 'Nouvel Étudiant', icon: UserPlus, href: '/admin/users' },
+    { label: 'Générer Rapport', icon: FileText, href: '/admin/logs' },
+    { label: 'Planning Global', icon: Calendar, href: '/admin/settings' },
+    { label: 'Sécurité', icon: Lock, href: '/admin/settings' },
   ]
 
   return (
@@ -43,15 +44,16 @@ export function QuickActionsGrid() {
       <h3 className="font-black font-headline text-on-surface mb-6 tracking-tight">Raccourcis rapides</h3>
       <div className="grid grid-cols-2 gap-4">
         {actions.map((action) => (
-          <button 
+          <Link 
             key={action.label} 
+            href={action.href}
             className="p-4 bg-surface-container-low rounded-xl flex flex-col items-center gap-2 hover:bg-secondary-container transition-all group active:scale-95"
           >
             <action.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
             <span className="text-[10px] font-bold text-on-surface-variant uppercase text-center tracking-tight">
               {action.label}
             </span>
-          </button>
+          </Link>
         ))}
       </div>
     </section>

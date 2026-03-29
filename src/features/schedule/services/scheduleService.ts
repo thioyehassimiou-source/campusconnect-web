@@ -16,7 +16,7 @@ export async function getSchedule() {
     .order('start_time', { ascending: true })
 
   if (error) {
-    console.error('Error fetching schedule:', error)
+    console.warn('Error fetching schedule:', error)
     return []
   }
 

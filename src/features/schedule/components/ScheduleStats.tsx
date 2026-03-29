@@ -1,4 +1,4 @@
-import { Timer, Science, ClipboardList } from 'lucide-react'
+import { Timer, FlaskConical, ClipboardList } from 'lucide-react'
 
 export function ScheduleStats() {
   const stats = [
@@ -12,7 +12,7 @@ export function ScheduleStats() {
     {
       label: 'Sessions Labo',
       value: '3 Sessions',
-      icon: Science,
+      icon: FlaskConical,
       color: 'text-secondary',
       bg: 'bg-secondary-container/50'
     },

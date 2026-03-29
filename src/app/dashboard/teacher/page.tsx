@@ -3,10 +3,11 @@ import { StatsCard } from '@/components/ui/StatsCard'
 import { TeacherCourseCard } from '@/components/ui/TeacherCourseCard'
 import { QuickTask } from '@/components/ui/QuickTask'
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import { 
   Users, 
   BookOpen, 
-  AutoGraph, 
+  TrendingUp, 
   Clock, 
   Download, 
   Plus,
@@ -48,14 +49,14 @@ export default async function TeacherDashboard() {
           <p className="text-on-surface-variant font-medium mt-1">Voici un aperçu de vos activités académiques pour aujourd'hui.</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-5 py-2.5 bg-surface-container-lowest text-primary font-bold rounded-xl border border-outline-variant/20 hover:bg-surface-container-high transition-all text-sm flex items-center gap-2 shadow-sm">
+          <Link href="/dashboard/teacher/resources" className="px-5 py-2.5 bg-surface-container-lowest text-primary font-bold rounded-xl border border-outline-variant/20 hover:bg-surface-container-high transition-all text-sm flex items-center gap-2 shadow-sm">
             <Download className="h-4 w-4" />
             Rapport mensuel
-          </button>
-          <button className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-lg shadow-primary/10 hover:shadow-xl hover:shadow-primary/20 transition-all text-sm flex items-center gap-2">
+          </Link>
+          <Link href="/dashboard/teacher/courses" className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-lg shadow-primary/10 hover:shadow-xl hover:shadow-primary/20 transition-all text-sm flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Nouveau cours
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -115,6 +116,7 @@ export default async function TeacherDashboard() {
                 icon={<GraduationCap className="h-5 w-5" />}
                 theme="error"
                 actionText="Commencer"
+                href="/dashboard/teacher/grades"
               />
               <QuickTask 
                 title="Valider les syllabus"
@@ -122,6 +124,7 @@ export default async function TeacherDashboard() {
                 icon={<FileText className="h-5 w-5" />}
                 theme="secondary"
                 actionText="Revoir les documents"
+                href="/dashboard/teacher/resources"
               />
             </div>
           </div>

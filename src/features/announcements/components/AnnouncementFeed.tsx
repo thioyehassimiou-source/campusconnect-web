@@ -14,7 +14,7 @@ export function AnnouncementFeed() {
         const data = await announcementService.getLatestAnnouncements()
         setAnnouncements(data)
       } catch (e) {
-        console.error('Failed to load announcements')
+        console.warn('Failed to load announcements')
       } finally {
         setLoading(false)
       }

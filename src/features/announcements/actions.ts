@@ -20,7 +20,7 @@ export async function createAnnouncement(formData: FormData) {
   })
 
   if (error) {
-    console.error('Error creating announcement:', error)
+    console.warn('Error creating announcement:', error)
     throw new Error('Erreur lors de la création de l\'annonce')
   }
   

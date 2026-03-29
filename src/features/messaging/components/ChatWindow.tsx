@@ -1,123 +1,80 @@
-import { Video, Phone, MoreVertical, Paperclip, Send, Smile } from 'lucide-react'
+import { useRef, useEffect } from 'react'
+import { Send, Paperclip, Image } from 'lucide-react'
 import { Message, Conversation } from '../types'
-import { useToast } from '@/components/ui/Toast'
 
 interface ChatWindowProps {
-  conversation: Conversation
+  activeConv: Conversation
   messages: Message[]
+  currentUserId: string | null
+  messageText: string
+  onMessageChange: (text: string) => void
+  onSend: (e?: React.FormEvent) => void
 }
 
-export function ChatWindow({ conversation, messages }: ChatWindowProps) {
-  const { toast } = useToast()
+export function ChatWindow({ activeConv, messages, currentUserId, messageText, onMessageChange, onSend }: ChatWindowProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const handleComingSoon = () => toast('Fonctionnalité bientôt disponible !', 'info')
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   return (
-    <div className="flex-1 flex flex-col bg-surface-container-lowest h-full relative border-r border-outline-variant/10">
-      {/* Chat Header */}
-      <div className="h-20 flex items-center justify-between px-8 bg-white/50 backdrop-blur-md border-b border-outline-variant/5 sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center gap-4">
+    <main className="flex-1 flex flex-col bg-white">
+      <header className="px-10 py-8 border-b border-outline-variant/10 flex justify-between items-center shadow-sm relative z-10">
+        <div className="flex items-center gap-6">
           <div className="relative">
-            <img 
-              src={conversation.avatar} 
-              alt={conversation.name} 
-              className="w-11 h-11 rounded-full object-cover ring-2 ring-primary/5" 
-            />
-            {conversation.isOnline && (
-              <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
-            )}
+            <div className="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center font-black text-secondary">
+              {activeConv.name?.charAt(0) || '?'}
+            </div>
+            {activeConv.isOnline && <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />}
           </div>
           <div>
-            <h3 className="font-black text-on-surface tracking-tight">{conversation.name}</h3>
-            <p className="text-[10px] text-green-600 font-black flex items-center gap-1.5 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              En ligne
-            </p>
+            <h3 className="text-xl font-black text-on-surface tracking-tight leading-none mb-1">{activeConv.name || 'Conversation'}</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Actif il y a quelques instants</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleComingSoon} className="w-10 h-10 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all">
-            <Video className="h-5 w-5" />
-          </button>
-          <button onClick={handleComingSoon} className="w-10 h-10 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all">
-            <Phone className="h-5 w-5" />
-          </button>
-          <button onClick={handleComingSoon} className="w-10 h-10 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all">
-            <MoreVertical className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
+      </header>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-        <div className="flex justify-center mb-4">
-          <span className="text-[10px] bg-surface-container-low text-on-surface-variant px-4 py-1.5 rounded-full font-black uppercase tracking-widest opacity-80">
-            Aujourd'hui
-          </span>
-        </div>
-
-        {messages.map((msg, i) => (
-          <div key={msg.id} className={`flex items-end gap-3 max-w-[85%] ${msg.isSent ? 'ml-auto flex-row-reverse' : ''}`}>
-            {!msg.isSent && (
-              <img 
-                src={conversation.avatar} 
-                alt="Sender" 
-                className="w-8 h-8 rounded-full object-cover mb-1 ring-1 ring-black/5" 
-              />
-            )}
-            <div className={`flex flex-col ${msg.isSent ? 'items-end' : 'items-start'}`}>
-              <div className={`
-                p-4 rounded-[1.25rem] shadow-sm transition-all
-                ${msg.isSent 
-                  ? 'bg-primary text-white rounded-br-none shadow-primary/10' 
-                  : 'bg-surface-container-low text-on-surface rounded-bl-none border border-outline-variant/10'
-                }
-              `}>
-                <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
-              </div>
-              
-              {msg.attachment && (
-                <div className="mt-2 bg-surface-container-low p-3 rounded-2xl border border-outline-variant/20 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-all max-w-xs shadow-sm group">
-                  <div className="w-10 h-10 bg-red-100 flex items-center justify-center rounded-xl text-red-600 group-hover:scale-105 transition-transform">
-                    <span className="material-symbols-outlined text-xl" data-icon="picture_as_pdf">picture_as_pdf</span>
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-xs font-black truncate text-on-surface">{msg.attachment.name}</p>
-                    <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">{msg.attachment.size} • PDF</p>
-                  </div>
-                  <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="download">download</span>
-                </div>
-              )}
-              
-              <span className="text-[10px] text-on-surface-variant mt-1.5 px-2 font-bold opacity-60">
-                {msg.timestamp}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-12 space-y-10 bg-surface-container-lowest/50">
+        {messages.map((msg) => (
+          <div key={msg.id} className={`flex flex-col ${msg.senderId === currentUserId ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+            <div className={`max-w-[70%] p-7 rounded-[2.5rem] shadow-sm relative group
+              ${msg.senderId === currentUserId
+                ? 'bg-primary text-white rounded-tr-lg shadow-xl shadow-primary/5' 
+                : 'bg-white text-on-surface rounded-tl-lg border border-outline-variant/10'
+              }
+            `}>
+              <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+              <span className={`absolute ${msg.senderId === currentUserId ? '-left-16' : '-right-16'} bottom-4 opacity-0 group-hover:opacity-40 transition-opacity text-[9px] font-black uppercase tracking-widest text-on-surface-variant`}>
+                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-6 bg-white/80 backdrop-blur-md border-t border-outline-variant/10 sticky bottom-0 z-20">
-        <div className="flex items-center gap-3 bg-surface-container-low p-2 px-4 rounded-[1.5rem] focus-within:ring-2 focus-within:ring-primary/10 transition-all shadow-inner border border-outline-variant/5">
-          <button className="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-            <Paperclip className="h-5 w-5" />
-          </button>
-          <input 
-            className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 font-medium" 
-            placeholder="Écrire un message..." 
-            type="text"
-          />
-          <div className="flex items-center gap-2">
-            <button className="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-              <Smile className="h-5 w-5" />
-            </button>
-            <button className="bg-primary text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all hover:shadow-primary/40">
-              <Send className="h-5 w-5" />
-            </button>
+      <footer className="p-8 bg-white border-t border-outline-variant/10">
+        <form onSubmit={onSend} className="bg-surface-container-low p-2 rounded-[2.5rem] flex items-center gap-4 border border-outline-variant/5">
+          <div className="flex gap-1 ml-2">
+            <button type="button" className="p-3 text-on-surface-variant hover:text-primary transition-colors"><Paperclip className="h-5 w-5" /></button>
+            <button type="button" className="p-3 text-on-surface-variant hover:text-primary transition-colors"><Image className="h-5 w-5" /></button>
           </div>
-        </div>
-      </div>
-    </div>
+          <input 
+            value={messageText}
+            onChange={(e) => onMessageChange(e.target.value)}
+            placeholder="Votre message..." 
+            className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-semibold p-4 placeholder:text-on-surface-variant/30" 
+          />
+          <button 
+            type="submit"
+            disabled={!messageText.trim()}
+            className="bg-primary text-white p-5 rounded-3xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
+          >
+            <Send className="h-5 w-5" />
+          </button>
+        </form>
+      </footer>
+    </main>
   )
 }

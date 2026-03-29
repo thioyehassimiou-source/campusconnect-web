@@ -19,7 +19,7 @@ export async function getAttendance(courseId?: string) {
   const { data, error } = await query.order('marked_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching attendance:', error)
+    console.warn('Error fetching attendance:', error)
     return []
   }
 

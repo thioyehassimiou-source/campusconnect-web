@@ -16,7 +16,7 @@ export async function getForumThreads(category: string = 'All') {
   const { data, error } = await query
 
   if (error) {
-    console.error('Error fetching forum threads:', error)
+    console.warn('Error fetching forum threads:', error)
     return []
   }
 

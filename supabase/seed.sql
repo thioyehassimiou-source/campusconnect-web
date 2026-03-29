@@ -309,10 +309,23 @@ CREATE TABLE IF NOT EXISTS public.ai_history (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 19. Assignments
+CREATE TABLE IF NOT EXISTS public.assignments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  deadline TIMESTAMPTZ NOT NULL,
+  type TEXT CHECK (type IN ('report', 'code')) DEFAULT 'report',
+  course_id UUID REFERENCES public.courses(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'submitted', 'graded')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- RLS Policies Implementation
 
 -- Profiles: Users can view all profiles, but only update their own
 CREATE POLICY "Profiles are viewable by everyone" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Announcements: Viewable by all, editable by 'admin' and 'teacher' roles
@@ -361,3 +374,9 @@ CREATE POLICY "Teachers can manage resources" ON public.resources FOR ALL USING 
 -- Notifications: Users see only their own
 CREATE POLICY "Users can view own notifications" ON public.notifications FOR SELECT USING (auth.uid() = profile_id);
 CREATE POLICY "Users can update own notifications" ON public.notifications FOR UPDATE USING (auth.uid() = profile_id);
+
+-- Assignments: Users see own, Teachers manage own courses
+CREATE POLICY "Users can view own assignments" ON public.assignments FOR SELECT USING (auth.uid() = student_id);
+CREATE POLICY "Teachers can manage assignments" ON public.assignments FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.courses WHERE id = assignments.course_id AND instructor_id = auth.uid())
+);

@@ -1,4 +1,3 @@
-import { Visibility, Download, TaskAlt } from '@mui/icons-material' // Using material icons where appropriate or Lucide
 import { Eye, Download as DownloadIcon, CheckCircle2, MoreHorizontal } from 'lucide-react'
 import { Assignment } from '../types'
 
