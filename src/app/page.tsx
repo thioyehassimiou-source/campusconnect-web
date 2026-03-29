@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { BookOpen, Calendar, MessageSquare, ArrowRight, ChevronRight, GraduationCap } from 'lucide-react'
 import InteractiveElement from '@/components/landing/InteractiveElement'
 import { ThemeToggleLight } from '@/components/theme/ThemeToggle'
+import { LandingNavbar } from '@/components/landing/LandingNavbar'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -15,62 +16,33 @@ export default async function Home() {
 
   return (
     <div className="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen scroll-smooth overflow-x-hidden w-full">
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 w-full z-50 bg-primary/95 backdrop-blur-md border-b border-white/10 shadow-lg shadow-primary/10">
-        <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 w-full max-w-screen-xl mx-auto box-border">
-          <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-[1.02]">
-            <div className="bg-white p-1.5 rounded-xl shadow-sm">
-              <img src="/logo-campusconnect.png" alt="CampusConnect Logo" className="h-9 w-auto" />
-            </div>
-            <div className="flex flex-col">
-              <div className="text-xl font-headline font-black text-white leading-tight tracking-tighter">CampusConnect</div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-white/60 leading-none decoration-none">Université de Labé</div>
-            </div>
-          </Link>
-          
-          <div className="hidden lg:flex items-center gap-10 font-headline font-bold text-xs uppercase tracking-widest text-white/70">
-            <a href="#features" className="hover:text-white transition-all duration-300 border-b-2 border-transparent hover:border-white pb-1">Services</a>
-            <a href="#faculties" className="hover:text-white transition-all duration-300 border-b-2 border-transparent hover:border-white pb-1">Facultés</a>
-            <a href="#contact" className="hover:text-white transition-all duration-300 border-b-2 border-transparent hover:border-white pb-1">Contact</a>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ThemeToggleLight />
-            <Link href="/login" className="px-4 py-2 text-white font-headline font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all duration-300 rounded-xl">
-              Connexion
-            </Link>
-            <Link href="/register" className="px-6 py-3 bg-white text-primary font-headline font-black text-xs uppercase tracking-widest rounded-2xl active:scale-95 transition-transform duration-200 shadow-xl shadow-white/10 hover:bg-white/90">
-              Inscription
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <LandingNavbar />
 
       <main className="pt-24">
         {/* Hero Section */}
-        <section className="relative px-4 sm:px-6 lg:px-8 py-16 lg:py-32 w-full max-w-screen-xl mx-auto overflow-hidden">
+        <section className="relative px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-32 w-full max-w-screen-xl mx-auto overflow-hidden">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center flex-col md:flex-row">
-            <div className="z-10 text-center lg:text-left entrance-right">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-[10px] font-black tracking-[0.2em] text-primary uppercase bg-primary/5 rounded-full border border-primary/10">
+            <div className="z-10 text-center lg:text-left entrance-right flex flex-col items-center lg:items-start">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 md:mb-8 text-[10px] font-black tracking-[0.2em] text-primary uppercase bg-primary/5 rounded-full border border-primary/10">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
                 Innovation Académique en Guinée
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black text-primary leading-[1] mb-8 tracking-tighter font-headline">
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black text-primary leading-tight lg:leading-none mb-6 md:mb-8 tracking-tighter font-headline">
                 L'Excellence <br/>
                 <span className="text-primary-container/80 italic">Redéfinie.</span>
               </h1>
-              <p className="text-xl text-on-surface-variant leading-relaxed mb-12 max-w-xl mx-auto lg:mx-0 font-body font-medium">
+              <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed mb-8 md:mb-12 max-w-xl mx-auto lg:mx-0 font-body font-medium">
                 Découvrez CampusConnect, le portail numérique officiel de l'Université de Labé. Une plateforme intégrée pour une gestion académique fluide et performante.
               </p>
-              <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
-                <Link href="/register" className="px-10 py-5 bg-primary text-white font-black uppercase tracking-[0.2em] text-xs rounded-[2rem] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300 font-headline flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row flex-wrap w-full sm:w-auto gap-4 justify-center lg:justify-start">
+                <Link href="/register" className="w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-[2rem] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300 font-headline flex items-center justify-center gap-3 min-h-[56px] md:min-h-[64px]">
                   Commencer l'aventure
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <a href="#features" className="px-10 py-5 border-2 border-outline-variant text-primary font-black uppercase tracking-[0.2em] text-xs rounded-[2rem] hover:bg-surface-container transition-all duration-300 active:scale-95 font-headline">
+                <a href="#features" className="w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 border-2 border-outline-variant text-primary font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-[2rem] hover:bg-surface-container transition-all duration-300 active:scale-95 font-headline flex items-center justify-center min-h-[56px] md:min-h-[64px]">
                   Découvrir nos services
                 </a>
               </div>
@@ -89,7 +61,7 @@ export default async function Home() {
         </section>
 
         {/* Chiffres Clés */}
-        <section className="py-24 bg-surface-container-low border-y border-outline-variant/10">
+        <section className="py-12 md:py-24 bg-surface-container-low border-y border-outline-variant/10">
           <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p className="font-label text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-16">Nos Chiffres Clés</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
@@ -109,7 +81,7 @@ export default async function Home() {
         </section>
 
         {/* Services Section */}
-        <section id="features" className="py-20 lg:py-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/[0.03] to-primary/[0.08] border-y border-primary/10">
+        <section id="features" className="py-16 md:py-24 lg:py-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/[0.03] to-primary/[0.08] border-y border-primary/10">
           <div className="w-full max-w-screen-xl mx-auto">
           <div className="mb-16 lg:mb-24 text-center">
             <h2 className="text-4xl md:text-6xl font-black text-primary mb-8 tracking-tighter font-headline">Services Intégrés</h2>
@@ -136,7 +108,7 @@ export default async function Home() {
         </section>
 
         {/* Faculties Section */}
-        <section id="faculties" className="py-20 lg:py-32 bg-primary text-white overflow-hidden relative">
+        <section id="faculties" className="py-16 md:py-24 lg:py-32 bg-primary text-white overflow-hidden relative">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-container/20 -skew-x-12 translate-x-1/2"></div>
           <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-black mb-12 lg:mb-20 tracking-tighter text-center lg:text-left font-headline">Nos Facultés</h2>
@@ -158,17 +130,17 @@ export default async function Home() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-20 lg:py-32 px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl mx-auto">
-          <div className="w-full mx-auto bg-surface-container p-8 lg:p-24 text-center rounded-[2rem] lg:rounded-[3rem] border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up box-border">
+        <section className="py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl mx-auto">
+          <div className="w-full mx-auto bg-surface-container p-8 md:p-12 lg:p-24 text-center rounded-[2rem] lg:rounded-[3rem] border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up box-border">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-            <h2 className="text-3xl md:text-4xl lg:text-6xl font-black font-headline text-primary mb-8 tracking-tighter">Prêt à transformer votre futur ?</h2>
-            <p className="text-on-surface-variant text-lg mb-12 max-w-xl mx-auto leading-relaxed font-medium">Rejoignez des milliers d'étudiants sur la plateforme académique la plus avancée de Guinée.</p>
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              <Link href="/register" className="px-12 py-5 bg-primary text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-3">
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-black font-headline text-primary mb-6 md:mb-8 tracking-tighter leading-tight lg:leading-snug">Prêt à transformer votre futur ?</h2>
+            <p className="text-on-surface-variant text-base md:text-lg mb-8 md:mb-12 max-w-xl mx-auto leading-relaxed font-medium">Rejoignez des milliers d'étudiants sur la plateforme académique la plus avancée de Guinée.</p>
+            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full">
+              <Link href="/register" className="w-full sm:w-auto px-6 md:px-12 py-4 md:py-5 min-h-[56px] text-center bg-primary text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3">
                 S'inscrire maintenant
                 <ChevronRight className="h-4 w-4" />
               </Link>
-              <Link href="/login" className="px-12 py-5 border-2 border-primary/20 text-primary rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:bg-primary/5 transition-all">
+              <Link href="/login" className="w-full sm:w-auto px-6 md:px-12 py-4 md:py-5 min-h-[56px] text-center border-2 border-primary/20 text-primary rounded-full font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-primary/5 transition-all flex items-center justify-center">
                 Se connecter
               </Link>
             </div>
