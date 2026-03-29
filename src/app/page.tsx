@@ -14,10 +14,10 @@ export default async function Home() {
   }
 
   return (
-    <div className="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen scroll-smooth">
+    <div className="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen scroll-smooth overflow-x-hidden w-full">
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 w-full z-50 bg-primary/95 backdrop-blur-md border-b border-white/10 shadow-lg shadow-primary/10">
-        <div className="flex justify-between items-center px-6 md:px-10 py-4 w-full max-w-screen-2xl mx-auto">
+        <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 w-full max-w-screen-xl mx-auto box-border">
           <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-[1.02]">
             <div className="bg-white p-1.5 rounded-xl shadow-sm">
               <img src="/logo-campusconnect.png" alt="CampusConnect Logo" className="h-9 w-auto" />
@@ -48,8 +48,8 @@ export default async function Home() {
 
       <main className="pt-24">
         {/* Hero Section */}
-        <section className="relative px-6 md:px-10 py-16 lg:py-32 max-w-screen-2xl mx-auto overflow-hidden">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <section className="relative px-4 sm:px-6 lg:px-8 py-16 lg:py-32 w-full max-w-screen-xl mx-auto overflow-hidden">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center flex-col md:flex-row">
             <div className="z-10 text-center lg:text-left entrance-right">
               <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-[10px] font-black tracking-[0.2em] text-primary uppercase bg-primary/5 rounded-full border border-primary/10">
                 <span className="relative flex h-2 w-2">
@@ -58,7 +58,7 @@ export default async function Home() {
                 </span>
                 Innovation Académique en Guinée
               </div>
-              <h1 className="text-6xl lg:text-8xl font-black text-primary leading-[1] mb-8 tracking-tighter font-headline">
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black text-primary leading-[1] mb-8 tracking-tighter font-headline">
                 L'Excellence <br/>
                 <span className="text-primary-container/80 italic">Redéfinie.</span>
               </h1>
@@ -90,7 +90,7 @@ export default async function Home() {
 
         {/* Chiffres Clés */}
         <section className="py-24 bg-surface-container-low border-y border-outline-variant/10">
-          <div className="max-w-screen-2xl mx-auto px-10 text-center">
+          <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p className="font-label text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-16">Nos Chiffres Clés</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
               {[
@@ -109,10 +109,10 @@ export default async function Home() {
         </section>
 
         {/* Services Section */}
-        <section id="features" className="py-40 px-6 md:px-10 bg-gradient-to-b from-primary/[0.03] to-primary/[0.08] border-y border-primary/10">
-          <div className="max-w-screen-2xl mx-auto">
-          <div className="mb-24 text-center">
-            <h2 className="text-5xl lg:text-6xl font-black text-primary mb-8 tracking-tighter font-headline">Services Intégrés</h2>
+        <section id="features" className="py-20 lg:py-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/[0.03] to-primary/[0.08] border-y border-primary/10">
+          <div className="w-full max-w-screen-xl mx-auto">
+          <div className="mb-16 lg:mb-24 text-center">
+            <h2 className="text-4xl md:text-6xl font-black text-primary mb-8 tracking-tighter font-headline">Services Intégrés</h2>
             <div className="w-24 h-2 bg-primary mx-auto rounded-full"></div>
           </div>
           <div className="grid md:grid-cols-3 gap-10">
@@ -136,10 +136,10 @@ export default async function Home() {
         </section>
 
         {/* Faculties Section */}
-        <section id="faculties" className="py-32 bg-primary text-white overflow-hidden relative">
+        <section id="faculties" className="py-20 lg:py-32 bg-primary text-white overflow-hidden relative">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-container/20 -skew-x-12 translate-x-1/2"></div>
-          <div className="max-w-screen-2xl mx-auto px-10 relative z-10">
-            <h2 className="text-5xl lg:text-7xl font-black mb-20 tracking-tighter text-center lg:text-left font-headline">Nos Facultés</h2>
+          <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black mb-12 lg:mb-20 tracking-tighter text-center lg:text-left font-headline">Nos Facultés</h2>
             <div className="grid lg:grid-cols-3 gap-12">
               {[
                 { title: 'Sciences & Techniques (FST)', items: ['Informatique', 'MIAGE', 'Mathématiques Appliquées', 'Biologie & Environnement', 'Énergie Photovoltaïque'] },
@@ -158,10 +158,10 @@ export default async function Home() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-32 px-6">
-          <div className="max-w-5xl mx-auto bg-surface-container p-16 lg:p-24 text-center rounded-[3rem] border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up">
+        <section className="py-20 lg:py-32 px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl mx-auto">
+          <div className="w-full mx-auto bg-surface-container p-8 lg:p-24 text-center rounded-[2rem] lg:rounded-[3rem] border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up box-border">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-            <h2 className="text-4xl lg:text-6xl font-black font-headline text-primary mb-8 tracking-tighter">Prêt à transformer votre futur ?</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-black font-headline text-primary mb-8 tracking-tighter">Prêt à transformer votre futur ?</h2>
             <p className="text-on-surface-variant text-lg mb-12 max-w-xl mx-auto leading-relaxed font-medium">Rejoignez des milliers d'étudiants sur la plateforme académique la plus avancée de Guinée.</p>
             <div className="flex flex-wrap items-center justify-center gap-6">
               <Link href="/register" className="px-12 py-5 bg-primary text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-3">
@@ -178,11 +178,11 @@ export default async function Home() {
 
       <footer id="contact" className="bg-primary w-full border-t border-white/10 relative overflow-hidden">
         {/* Decorative glows */}
-        <div className="absolute -top-40 right-0 w-[600px] h-[400px] bg-white/[0.02] rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-40 right-0 w-[600px] h-[400px] bg-white/[0.02] rounded-full blur-3xl pointer-events-none max-w-full" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-white/[0.03] rounded-full blur-3xl pointer-events-none max-w-full" />
 
         {/* Main footer content */}
-        <div className="max-w-screen-2xl mx-auto px-6 md:px-10 pt-16 pb-10 relative z-10">
+        <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 pb-12 border-b border-white/10">
             
             {/* Brand column */}

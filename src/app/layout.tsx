@@ -12,6 +12,14 @@ const manrope = Manrope({
   subsets: ['latin'],
 })
 
+import type { Viewport } from 'next'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'Portail Numérique - Université de Labé',
   description: 'Espace numérique de travail de l Université de Labé (Guinée).',
