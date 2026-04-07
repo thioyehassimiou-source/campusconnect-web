@@ -37,8 +37,8 @@ export default async function NewsPage() {
                   {announcement.title}
                 </h2>
                 
-                <p className="text-on-surface-variant leading-relaxed mb-6 font-medium">
-                  {announcement.summary}
+                <p className="text-on-surface-variant leading-relaxed mb-6 font-medium line-clamp-3">
+                  {announcement.content}
                 </p>
 
                 <div className="flex items-center justify-between pt-6 border-t border-outline-variant/5">
