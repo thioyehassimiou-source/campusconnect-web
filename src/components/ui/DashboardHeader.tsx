@@ -8,9 +8,9 @@ export function DashboardHeader({ title, description, children }: DashboardHeade
   return (
     <div className="sm:flex sm:items-center sm:justify-between mb-8">
       <div>
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">{title}</h1>
+        <h1 className="text-3xl font-black text-on-surface tracking-tight">{title}</h1>
         {description && (
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-on-surface-variant">
             {description}
           </p>
         )}

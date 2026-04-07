@@ -1,6 +1,7 @@
 import { login } from './actions'
 import { GraduationCap, Mail, Lock, Eye, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { SubmitButton } from '@/components/ui/SubmitButton'
 
 export default async function LoginPage({
   searchParams,
@@ -66,13 +67,25 @@ export default async function LoginPage({
           </div>
 
           {message === 'check-email' && (
-            <div className="mb-8 rounded-2xl bg-primary/[0.03] p-5 border border-primary/10 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm">
-              <div className="bg-primary/10 p-2 rounded-full mt-0.5">
-                <Mail className="h-4 w-4 text-primary" />
+            <div className="mb-8 rounded-2xl bg-emerald-50 p-5 border border-emerald-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm">
+              <div className="bg-emerald-100 p-2 rounded-full mt-0.5">
+                <Mail className="h-4 w-4 text-emerald-700" />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Presque fini !</p>
-                <p className="text-xs font-bold text-on-surface-variant/80 leading-relaxed">Veuillez consulter votre boîte mail pour confirmer votre inscription avant de vous connecter.</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-800 mb-1">Presque fini !</p>
+                <p className="text-xs font-bold text-emerald-900/80 leading-relaxed">Veuillez consulter votre boîte mail pour confirmer votre inscription avant de vous connecter.</p>
+              </div>
+            </div>
+          )}
+
+          {message === 'reset-link-sent' && (
+            <div className="mb-8 rounded-2xl bg-blue-50 p-5 border border-blue-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm">
+              <div className="bg-blue-100 p-2 rounded-full mt-0.5">
+                <Mail className="h-4 w-4 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-800 mb-1">Lien envoyé !</p>
+                <p className="text-xs font-bold text-blue-900/80 leading-relaxed">Un lien de réinitialisation a été envoyé à votre adresse institutionnelle.</p>
               </div>
             </div>
           )}
@@ -109,7 +122,7 @@ export default async function LoginPage({
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mot de passe</label>
-                <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Oublié ?</Link>
+                <Link href="/forgot-password" virtual-link="true" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Oublié ?</Link>
               </div>
               <div className="relative">
                 <input 
@@ -132,12 +145,11 @@ export default async function LoginPage({
               <label htmlFor="remember" className="ml-2 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer">Se souvenir de moi</label>
             </div>
 
-            <button 
-              type="submit"
+            <SubmitButton 
               className="w-full py-5 bg-primary text-white font-headline font-black uppercase tracking-[0.2em] rounded-3xl shadow-xl shadow-primary/20 active:scale-[0.98] transition-all text-xs"
             >
               Se connecter
-            </button>
+            </SubmitButton>
           </form>
 
           <div className="mt-12 text-center">

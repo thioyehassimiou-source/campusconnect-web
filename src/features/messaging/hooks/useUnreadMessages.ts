@@ -3,15 +3,20 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+import { useUser } from '@/providers/UserProvider'
+
 export function useUnreadMessages() {
   const [unreadCount, setUnreadCount] = useState(0)
+  const { user } = useUser()
   const supabase = createClient()
 
   useEffect(() => {
-    const fetchUnreadCount = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+    if (!user) {
+      setUnreadCount(0)
+      return
+    }
 
+    const fetchUnreadCount = async () => {
       // Count messages where read_at is null AND sender is not me
       // AND I am a participant in the conversation
       const { data, error } = await supabase
@@ -21,8 +26,6 @@ export function useUnreadMessages() {
         .neq('sender_id', user.id)
 
       if (data) {
-        // Technically we should filter by conversations where user is participant
-        // but RLS should already handle that if "Users can view messages in their conversations" is active
         setUnreadCount(data.length)
       }
     }
@@ -41,7 +44,7 @@ export function useUnreadMessages() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase])
+  }, [supabase, user])
 
   return unreadCount
 }

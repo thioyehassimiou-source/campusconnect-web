@@ -5,7 +5,7 @@ export async function getAnnouncements() {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('announcements')
-    .select('*')
+    .select('id, title, content, type, date, author, image, read_time, engagement, status')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -13,5 +13,5 @@ export async function getAnnouncements() {
     return []
   }
 
-  return data as Announcement[]
+  return data as unknown as Announcement[]
 }

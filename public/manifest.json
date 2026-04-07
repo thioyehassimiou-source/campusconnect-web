@@ -1,0 +1,56 @@
+{
+  "name": "CampusConnect - Université de Labé",
+  "short_name": "CampusConnect",
+  "description": "Portail numérique officiel de l'Université de Labé — Emploi du temps, notes, messagerie.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#00185F",
+  "lang": "fr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mon Emploi du Temps",
+      "short_name": "Planning",
+      "description": "Voir les cours de la semaine",
+      "url": "/dashboard/student/schedule",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mes Messages",
+      "short_name": "Messages",
+      "description": "Ouvrir la messagerie",
+      "url": "/dashboard/student/messages",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Émarger",
+      "short_name": "Émargement",
+      "description": "Scanner un QR Code pour émarger",
+      "url": "/dashboard/student/attendance",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

@@ -40,9 +40,9 @@ export function StorageCard() {
             'Contacter le secrétariat académique'
           ].map((item) => (
             <li key={item}>
-              <a href="#" className="text-sm font-bold text-on-surface-variant hover:text-primary underline underline-offset-8 decoration-primary/20 hover:decoration-primary transition-all">
-                {item}
-              </a>
+              <span className="text-sm font-bold text-on-surface-variant/50 cursor-not-allowed transition-all">
+                {item} (Bientôt)
+              </span>
             </li>
           ))}
         </ul>

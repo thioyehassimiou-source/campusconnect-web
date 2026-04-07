@@ -40,38 +40,47 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-container-low">
-            {transactions.map((tx) => (
-              <tr key={tx.id} className="group hover:bg-surface-container-low/20 transition-colors">
-                <td className="px-8 py-6 text-xs font-black text-on-surface-variant opacity-60 tracking-widest">{tx.reference}</td>
-                <td className="px-8 py-6">
-                  <p className="text-sm font-black text-on-surface tracking-tight">{tx.designation}</p>
-                  <p className="text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mt-0.5">{tx.category}</p>
-                </td>
-                <td className="px-8 py-6 text-sm font-semibold text-on-surface-variant">{tx.date}</td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center gap-3 text-on-surface-variant">
-                    <span className="p-1.5 rounded-lg bg-surface-container-low">
-                      {getModeIcon(tx.mode)}
-                    </span>
-                    <span className="text-[10px] font-black uppercase tracking-tighter">{getModeLabel(tx.mode)}</span>
-                  </div>
-                </td>
-                <td className="px-8 py-6 text-sm font-black text-right tracking-tight text-primary">
-                  {tx.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} {tx.currency}
-                </td>
-                <td className="px-8 py-6">
-                  <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest border border-green-100/50">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    Payé
-                  </span>
-                </td>
-                <td className="px-8 py-6 text-center">
-                  <button className="p-3 text-primary hover:bg-primary/5 rounded-2xl transition-all group-hover:rotate-6 shadow-sm">
-                    <FileText className="h-5 w-5" />
-                  </button>
+            {transactions.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-8 py-12 text-center text-on-surface-variant/50">
+                  <p className="text-sm font-black">Aucune transaction</p>
+                  <p className="text-[10px] font-bold mt-1">Vous n'avez pas encore effectué de paiement.</p>
                 </td>
               </tr>
-            ))}
+            ) : (
+              transactions.map((tx) => (
+                <tr key={tx.id} className="group hover:bg-surface-container-low/20 transition-colors">
+                  <td className="px-8 py-6 text-xs font-black text-on-surface-variant opacity-60 tracking-widest">{tx.reference}</td>
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-on-surface tracking-tight">{tx.designation}</p>
+                    <p className="text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mt-0.5">{tx.category}</p>
+                  </td>
+                  <td className="px-8 py-6 text-sm font-semibold text-on-surface-variant">{tx.date}</td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-3 text-on-surface-variant">
+                      <span className="p-1.5 rounded-lg bg-surface-container-low">
+                        {getModeIcon(tx.mode)}
+                      </span>
+                      <span className="text-[10px] font-black uppercase tracking-tighter">{getModeLabel(tx.mode)}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-sm font-black text-right tracking-tight text-primary">
+                    {tx.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} {tx.currency}
+                  </td>
+                  <td className="px-8 py-6">
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest border border-green-100/50">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      Payé
+                    </span>
+                  </td>
+                  <td className="px-8 py-6 text-center">
+                    <button className="p-3 text-primary hover:bg-primary/5 rounded-2xl transition-all group-hover:rotate-6 shadow-sm">
+                      <FileText className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

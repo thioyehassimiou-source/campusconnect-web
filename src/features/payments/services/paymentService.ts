@@ -8,7 +8,7 @@ export async function getFinancialSummary() {
 
   const { data, error } = await supabase
     .from('financial_summaries')
-    .select('*')
+    .select('total_paid, remaining_balance, currency, is_up_to_date, next_deadline')
     .eq('user_id', user.id)
     .single()
 
@@ -17,7 +17,7 @@ export async function getFinancialSummary() {
     return null
   }
 
-  return data as FinancialSummary
+  return data as unknown as FinancialSummary
 }
 
 export async function getTransactions() {
@@ -27,7 +27,7 @@ export async function getTransactions() {
 
   const { data, error } = await supabase
     .from('transactions')
-    .select('*')
+    .select('id, reference, designation, category, date, mode, amount, currency, status, invoice_url')
     .eq('user_id', user.id)
     .order('date', { ascending: false })
 
@@ -36,5 +36,5 @@ export async function getTransactions() {
     return []
   }
 
-  return data as Transaction[]
+  return data as unknown as Transaction[]
 }

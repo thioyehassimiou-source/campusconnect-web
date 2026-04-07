@@ -1,28 +1,30 @@
-import { createClient } from '@/lib/supabase/client'
+import { logger } from '@/lib/logger'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 export const announcementService = {
-  async getLatestAnnouncements(limit = 10) {
-    const supabase = createClient()
-    const { data: announcements, error } = await supabase
-      .from('announcements')
-      .select('id, title, summary, created_at, author_id')
-      .order('created_at', { ascending: false })
-      .limit(limit)
+  async getLatestAnnouncements(supabase: SupabaseClient, limit = 10, page = 1) {
+    const from = (page - 1) * limit
+    const to = from + limit - 1
 
-    if (error) return []
+    try {
+      const { data: announcements, error } = await supabase
+        .from('announcements')
+        .select(`
+          id, 
+          title, 
+          content,
+          created_at, 
+          profiles:user_id(nom, full_name)
+        `)
+        .order('created_at', { ascending: false })
+        .range(from, to)
 
-    // Fetch authors separately if join fails
-    const authorIds = [...new Set(announcements.map(a => a.author_id).filter(Boolean))]
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .in('id', authorIds)
+      if (error) throw error
 
-    const profileMap = Object.fromEntries(profiles?.map(p => [p.id, p]) || [])
-
-    return announcements.map(a => ({
-      ...a,
-      profiles: profileMap[a.author_id] || { full_name: 'Administration' }
-    }))
+      return announcements || []
+    } catch (err) {
+      logger.trackFailure('getLatestAnnouncements', err)
+      return []
+    }
   }
 }

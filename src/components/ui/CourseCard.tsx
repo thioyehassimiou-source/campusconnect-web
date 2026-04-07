@@ -1,4 +1,6 @@
 import { MapPin, Video } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { slideUp } from '@/lib/animations'
 
 interface CourseCardProps {
   timeStart: string
@@ -12,36 +14,39 @@ interface CourseCardProps {
 
 export function CourseCard({ timeStart, timeEnd, title, location, instructor, type, isHighlight }: CourseCardProps) {
   return (
-    <div className={`
-      card-premium p-6 flex items-center gap-8 border-l-[6px] interactive-element group entrance-up
-      ${isHighlight ? 'border-primary ring-1 ring-primary/10 bg-primary/[0.01]' : 'border-outline-variant/10'}
-    `}>
-      <div className="text-center min-w-[80px] p-4 bg-surface-container-low/30 rounded-[var(--radius-standard)] group-hover:bg-primary/10 transition-colors duration-500">
-        <p className="text-sm font-black text-on-surface tracking-tighter">{timeStart}</p>
-        <p className="text-[10px] text-on-surface-variant/40 uppercase font-black tracking-widest mt-1">{timeEnd}</p>
+    <motion.div 
+      variants={slideUp}
+      className={`
+        card-premium p-4 md:p-6 flex items-center gap-6 border-l-4 group
+        ${isHighlight ? 'border-emerald-500' : 'border-white/5'}
+      `}
+    >
+      <div className="text-center min-w-[70px] p-3 bg-slate-900 rounded-lg group-hover:bg-emerald-500/10 transition-colors duration-300">
+        <p className="text-xs font-black text-white tracking-tighter">{timeStart}</p>
+        <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mt-0.5">{timeEnd}</p>
       </div>
       <div className="flex-1">
-        <h4 className="text-base font-black font-headline text-on-surface group-hover:text-primary transition-colors leading-tight mb-2 tracking-tighter">{title}</h4>
-        <div className="flex items-center gap-4 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
-          <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest flex items-center gap-2">
-            {type === 'PRESENTIEL' ? <MapPin className="h-3.5 w-3.5 text-primary/60" /> : <Video className="h-3.5 w-3.5 text-indigo-500/60" />}
+        <h4 className="text-sm font-black text-white group-hover:text-emerald-400 transition-colors leading-tight mb-1 tracking-tight">{title}</h4>
+        <div className="flex items-center gap-3 opacity-60">
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+            {type === 'PRESENTIEL' ? <MapPin className="h-3 w-3 text-emerald-500/60" /> : <Video className="h-3 w-3 text-blue-500/60" />}
             {location}
           </p>
-          <div className="h-1 w-1 bg-outline-variant/30 rounded-full"></div>
-          <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">{instructor}</p>
+          <div className="h-0.5 w-0.5 bg-slate-700 rounded-full"></div>
+          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{instructor}</p>
         </div>
       </div>
-      <div className="text-right">
+      <div className="hidden sm:block">
         <span className={`
-          inline-block px-4 py-1.5 text-[9px] rounded-full font-black uppercase tracking-[0.2em] shadow-sm border transition-all duration-500
+          px-3 py-1 text-[8px] rounded-md font-black uppercase tracking-widest border
           ${type === 'PRESENTIEL' 
-            ? 'bg-secondary-container/10 text-on-secondary-container border-secondary-container/20 group-hover:bg-secondary-container/20' 
-            : 'bg-tertiary-fixed/10 text-on-tertiary-fixed border-tertiary-fixed/20 group-hover:bg-tertiary-fixed/20'
+            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
           }
         `}>
           {type}
         </span>
       </div>
-    </div>
+    </motion.div>
   )
 }

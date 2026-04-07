@@ -5,7 +5,7 @@ export async function getCourses() {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('courses')
-    .select('*')
+    .select('id, title, code, description, credits, instructor_id, department_id, level')
     .order('title', { ascending: true })
 
   if (error) {
@@ -13,5 +13,5 @@ export async function getCourses() {
     return []
   }
 
-  return data as Course[]
+  return data as unknown as any[]
 }

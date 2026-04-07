@@ -55,9 +55,28 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
         setPendingMessages(msgHistory)
         setMessages(prev => [...prev, { role: 'assistant', content: data.message }])
       } else if (data.content !== undefined) {
+        let displayContent = data.content
+        let extraActions = data.actions
+        let extraSteps = data.steps
+
+        // Fix: Detect and parse JSON-style responses from LLM
+        if (typeof data.content === 'string' && (data.content.trim().startsWith('{') || data.content.trim().startsWith('```json'))) {
+          try {
+            const cleanContent = data.content.replace(/```json|```/g, '').trim()
+            const parsed = JSON.parse(cleanContent)
+            if (parsed.content) displayContent = parsed.content
+            else if (parsed.message) displayContent = parsed.message
+            
+            if (parsed.actions) extraActions = [...(extraActions || []), ...parsed.actions]
+            if (parsed.steps) extraSteps = [...(extraSteps || []), ...parsed.steps]
+          } catch (e) {
+            console.warn("Failed to parse AI JSON content:", e)
+          }
+        }
+
         setMessages(prev => [...prev, { 
-          role: 'assistant', content: data.content,
-          actions: data.actions, steps: data.steps, agent: data.agent
+          role: 'assistant', content: displayContent,
+          actions: extraActions, steps: extraSteps, agent: data.agent
         }])
       } else if (data.error) {
         setMessages(prev => [...prev, { role: 'assistant', content: `[Erreur Système] L'Intelligence Artificielle n'est pas disponible pour le moment. Détail: ${data.error}` }])
@@ -106,9 +125,9 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
   ]
 
   return (
-    <div className="flex flex-col h-[750px] bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/20 shadow-2xl overflow-hidden relative">
+    <div className="flex flex-col h-[750px] bg-surface/40 backdrop-blur-xl rounded-[3rem] border border-outline shadow-2xl overflow-hidden relative">
       {/* AI Header */}
-      <div className="p-8 border-b border-outline-variant/5 flex items-center justify-between bg-white/20">
+      <div className="p-8 border-b border-outline/5 flex items-center justify-between bg-surface/20">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
             <Sparkles className="h-6 w-6 text-white" />
@@ -120,7 +139,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                 Mode Autonome
               </p>
-              <div className="h-3 w-px bg-outline-variant/20" />
+              <div className="h-3 w-px bg-outline/20" />
               <span className="bg-primary/5 text-primary text-[8px] font-black px-2 py-0.5 rounded-full border border-primary/10">
                 CAPACITÉ D'ACTION ACTIVÉE
               </span>
@@ -129,7 +148,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
         </div>
         <button 
           onClick={() => setMessages([])}
-          className="p-3 hover:bg-red-50 text-on-surface-variant/30 hover:text-red-500 rounded-2xl transition-all"
+          className="p-3 hover:bg-rose-500/10 text-on-surface-variant/30 hover:text-rose-500 rounded-2xl transition-all"
         >
           <Trash2 className="h-5 w-5" />
         </button>
@@ -138,15 +157,15 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
       {/* Chat Messages */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar scroll-smooth"
+        className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar scroll-smooth bg-background/5"
       >
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center p-12 opacity-40">
             <div className="w-20 h-20 bg-surface-container-high rounded-[2rem] flex items-center justify-center mb-6">
                <Bot className="h-10 w-10 text-on-surface-variant" />
             </div>
-            <h4 className="text-lg font-black tracking-tight mb-2 italic">Je suis votre Agent Actif.</h4>
-            <p className="text-sm font-medium max-w-xs mx-auto italic border-l-2 border-primary/20 pl-4 py-1">
+            <h4 className="text-lg font-black tracking-tight mb-2 italic text-on-surface">Je suis votre Agent Actif.</h4>
+            <p className="text-sm font-medium max-w-xs mx-auto italic border-l-2 border-primary/20 pl-4 py-1 text-on-surface-variant">
               "Je peux programmer des rappels, envoyer des notifications et vous conseiller sur le système LMD."
             </p>
           </div>
@@ -157,7 +176,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
             key={i} 
             className={`flex items-start gap-4 animate-in slide-in-from-bottom-2 duration-300 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
           >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-primary text-white' : 'bg-white border border-outline-variant/10 text-primary'}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-primary text-white' : 'bg-surface border border-outline text-primary'}`}>
               {m.role === 'user' ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
             </div>
             <div className="flex flex-col gap-2 max-w-[85%]">
@@ -177,14 +196,14 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
                 </div>
               )}
 
-              <div className={`p-5 rounded-3xl text-sm leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white border border-outline-variant/10 text-on-surface rounded-tl-none font-medium'}`}>
+              <div className={`p-5 rounded-3xl text-sm leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-surface border border-outline text-on-surface rounded-tl-none font-medium'}`}>
                 {m.content}
               </div>
               
               {m.actions && m.actions.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {m.actions.map((action, idx) => (
-                    <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-100 rounded-full text-[9px] font-black uppercase tracking-widest text-green-700 animate-in zoom-in duration-500">
+                    <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[9px] font-black uppercase tracking-widest text-emerald-500 animate-in zoom-in duration-500">
                       <Sparkles className="h-3 w-3" />
                       {action} effectuée
                     </div>
@@ -197,10 +216,10 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
 
         {isLoading && (
           <div className="flex items-start gap-4 animate-pulse">
-            <div className="w-10 h-10 rounded-xl bg-white border border-outline-variant/10 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-surface border border-outline flex items-center justify-center shrink-0">
                <Loader2 className="h-5 w-5 text-primary animate-spin" />
             </div>
-            <div className="bg-white/50 border border-outline-variant/10 p-5 rounded-3xl rounded-tl-none italic text-[10px] font-black tracking-[0.2em] text-primary/50">
+            <div className="bg-surface/50 border border-outline p-5 rounded-3xl rounded-tl-none italic text-[10px] font-black tracking-[0.2em] text-primary/50">
               RÉFLEXION EN COURS...
             </div>
           </div>
@@ -209,19 +228,19 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
 
       {/* Rate Limit Warning */}
       {rateLimited && (
-        <div className="mx-6 mb-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl flex items-center gap-3 animate-in slide-in-from-bottom-2 duration-300">
-          <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">⚡</div>
+        <div className="mx-6 mb-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3 animate-in slide-in-from-bottom-2 duration-300">
+          <div className="w-8 h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500">⚡</div>
           <div>
-            <p className="text-xs font-black text-orange-700">Limite d'utilisation atteinte</p>
-            <p className="text-[10px] text-orange-600/70">20 requêtes par heure maximum. Réessayez dans quelques minutes.</p>
+            <p className="text-xs font-black text-orange-500">Limite d'utilisation atteinte</p>
+            <p className="text-[10px] text-orange-500/70">20 requêtes par heure maximum. Réessayez dans quelques minutes.</p>
           </div>
         </div>
       )}
 
       {/* Confirmation Banner */}
       {pendingActions && (
-        <div className="mx-6 mb-4 p-5 bg-amber-50 border border-amber-100 rounded-2xl animate-in slide-in-from-bottom-2 duration-300">
-          <p className="text-[10px] font-black uppercase tracking-widest text-amber-700 mb-2">⚡ Action requiert votre confirmation</p>
+        <div className="mx-6 mb-4 p-5 bg-amber-500/10 border border-amber-500/20 rounded-2xl animate-in slide-in-from-bottom-2 duration-300">
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-2">⚡ Action requiert votre confirmation</p>
           {pendingActions.map((a, idx) => {
             let desc = "Action système en attente"
             if (a.tool === 'send_notification') {
@@ -232,7 +251,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
               desc = `Analyse du bilan académique`
             }
             return (
-              <p key={idx} className="text-sm font-bold text-amber-800 mb-2 flex items-start gap-2">
+              <p key={idx} className="text-sm font-bold text-amber-600 mb-2 flex items-start gap-2">
                 <span className="mt-0.5 opacity-50">•</span>
                 <span>{desc}</span>
               </p>
@@ -242,7 +261,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
             <button onClick={() => confirmAction(true)} className="flex-1 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 active:scale-95 transition-all">
               ✓ Confirmer l'action
             </button>
-            <button onClick={() => confirmAction(false)} className="flex-1 py-2.5 bg-white border border-outline-variant/10 text-on-surface text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-100 active:scale-95 transition-all">
+            <button onClick={() => confirmAction(false)} className="flex-1 py-2.5 bg-surface border border-outline text-on-surface text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-500/10 hover:text-rose-500 active:scale-95 transition-all">
               ✕ Annuler
             </button>
           </div>
@@ -250,7 +269,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
       )}
 
       {/* Quick Actions & Input Area */}
-      <div className="p-8 bg-white/20 border-t border-outline-variant/5">
+      <div className="p-8 bg-surface/20 border-t border-outline/5">
         <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
           {quickActions.map((action, idx) => (
             <button
@@ -260,7 +279,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
                 // Trigger handleSend in next tick to allow state update
                 setTimeout(handleSend, 0)
               }}
-              className="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all shadow-sm active:scale-95"
+              className="whitespace-nowrap px-4 py-2 bg-surface border border-outline rounded-xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-95"
             >
               {action.label}
             </button>
@@ -274,7 +293,7 @@ export function AIChat({ role }: { role: 'student' | 'teacher' }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Interrogez votre assistant personnel..."
-            className="w-full bg-white border border-outline-variant/10 rounded-[1.5rem] py-5 px-8 pr-16 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-inner placeholder:italic placeholder:opacity-50"
+            className="w-full bg-surface border border-outline rounded-[1.5rem] py-5 px-8 pr-16 text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-inner placeholder:italic placeholder:opacity-50"
           />
           <button 
             onClick={handleSend}

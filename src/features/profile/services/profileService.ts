@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import { Profile } from '../types'
+import { Profile, ProfileUpdate } from '../types'
 
-export async function getProfile() {
+export async function getProfile(): Promise<Profile | null> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
@@ -17,10 +17,14 @@ export async function getProfile() {
     return null
   }
 
-  return data as Profile
+  // Inject email from auth user if needed, as it lives in auth.users
+  return {
+    ...data,
+    email: user.email
+  } as Profile
 }
 
-export async function updateProfile(updates: Partial<Profile>) {
+export async function updateProfile(updates: ProfileUpdate) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')

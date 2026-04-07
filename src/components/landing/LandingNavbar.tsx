@@ -34,11 +34,11 @@ export function LandingNavbar() {
         <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
           <ThemeToggleLight />
           
-          <Link href="/login" className="px-3 md:px-4 py-2 text-white font-headline font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-white/10 transition-all duration-300 rounded-xl whitespace-nowrap">
+          <Link href="/login" className="px-3 md:px-4 py-2 text-white font-headline font-[800] text-[11px] md:text-xs uppercase tracking-widest hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300 rounded-xl whitespace-nowrap">
             Connexion
           </Link>
           
-          <Link href="/register" className="hidden lg:flex px-6 py-3 bg-white text-primary font-headline font-black text-xs uppercase tracking-widest rounded-2xl active:scale-95 transition-transform duration-200 shadow-xl shadow-white/10 hover:bg-white/90 whitespace-nowrap">
+          <Link href="/register" className="hidden lg:flex px-6 py-3 bg-white text-primary font-headline font-[800] text-xs uppercase tracking-widest rounded-xl hover:-translate-y-0.5 active:scale-95 transition-all duration-300 shadow-lg shadow-black/5 hover:shadow-black/10 hover:bg-white/95 whitespace-nowrap">
             Inscription
           </Link>
 

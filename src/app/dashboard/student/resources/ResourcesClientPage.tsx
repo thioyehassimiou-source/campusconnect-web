@@ -21,6 +21,22 @@ export default function ResourcesClientPage({ initialResources }: ResourcesClien
       }))
     : []
 
+  // Group by Course
+  const courseGroups = initialResources.reduce((acc: any, curr) => {
+    const courseName = curr.course?.title || 'Ressources Générales'
+    if (!acc[courseName]) acc[courseName] = []
+    acc[courseName].push(curr)
+    return acc
+  }, {})
+
+  const folders = Object.keys(courseGroups).map(name => ({
+    id: name,
+    name,
+    description: `Supports de cours et documents pour ${name}.`,
+    documentCount: courseGroups[name].length,
+    fileTypes: Array.from(new Set(courseGroups[name].map((r: any) => r.file_type || 'pdf'))) as any[]
+  }))
+
   return (
     <div className="max-w-[1400px] mx-auto animate-in fade-in duration-700 pb-20">
       {/* Editorial Header */}
@@ -54,8 +70,18 @@ export default function ResourcesClientPage({ initialResources }: ResourcesClien
 
       {/* Bento Grid: Folders */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {/* Supabase folders could be fetched here, currently using an empty fallback */}
-        <p className="col-span-full text-center py-10 text-on-surface-variant/40 text-xs font-black uppercase tracking-widest">Aucun dossier disponible</p>
+        {folders.length > 0 ? (
+          folders.map((folder) => (
+            <CourseFolder 
+              key={folder.id} 
+              folder={folder as any} 
+            />
+          ))
+        ) : (
+          <p className="col-span-full text-center py-10 text-on-surface-variant/40 text-xs font-black uppercase tracking-widest">
+            Aucun support de cours disponible pour le moment.
+          </p>
+        )}
       </section>
 
       {/* File Explorer View */}

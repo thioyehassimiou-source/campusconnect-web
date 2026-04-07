@@ -3,6 +3,7 @@
 import { Megaphone, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { announcementService } from '../services/announcementService'
+import { createClient } from '@/lib/supabase/client'
 
 export function AnnouncementFeed() {
   const [announcements, setAnnouncements] = useState<any[]>([])
@@ -10,8 +11,9 @@ export function AnnouncementFeed() {
 
   useEffect(() => {
     async function load() {
+      const supabase = createClient()
       try {
-        const data = await announcementService.getLatestAnnouncements()
+        const data = await announcementService.getLatestAnnouncements(supabase)
         setAnnouncements(data)
       } catch (e) {
         console.warn('Failed to load announcements')

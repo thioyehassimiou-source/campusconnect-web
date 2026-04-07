@@ -14,20 +14,22 @@ import {
   MapPin,
   ClipboardList,
   FolderOpen,
-  Headset,
-  BookOpen,
-  ClipboardCheck,
-  Newspaper,
-  Bot,
   LifeBuoy,
   MessagesSquare,
   CreditCard,
-  ChevronDown
+  ChevronDown,
+  Newspaper,
+  Bot,
+  ClipboardCheck,
+  ChevronLeft,
+  ChevronRight,
+  BookOpen
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUnreadMessages } from '@/features/messaging/hooks/useUnreadMessages'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface NavItem {
   name: string
@@ -54,7 +56,7 @@ const roleNavigation: Record<string, NavGroup[]> = {
       label: 'Académie',
       items: [
         { name: 'Emploi du temps', href: '/dashboard/student/schedule', icon: Calendar },
-        { name: 'Supports & Maquettes', href: '/dashboard/student/resources', icon: FolderOpen },
+        // { name: 'Supports & Maquettes', href: '/dashboard/student/resources', icon: FolderOpen },
         { name: 'Évaluations', href: '/dashboard/student/assignments', icon: ClipboardList },
         { name: 'Relevés de notes', href: '/dashboard/student/grades', icon: GraduationCap },
         { name: 'Catalogue', href: '/dashboard/courses', icon: BookOpen },
@@ -64,7 +66,7 @@ const roleNavigation: Record<string, NavGroup[]> = {
       label: 'Communication',
       items: [
         { name: 'Messagerie', href: '/dashboard/student/messages', icon: Mail },
-        { name: 'Forum', href: '/dashboard/forum', icon: MessagesSquare },
+        // { name: 'Forum', href: '/dashboard/forum', icon: MessagesSquare },
         { name: 'Assistance', href: '/dashboard/tickets', icon: LifeBuoy },
       ]
     },
@@ -73,7 +75,6 @@ const roleNavigation: Record<string, NavGroup[]> = {
       items: [
         { name: 'Espaces & Labos', href: '/dashboard/student/rooms', icon: MapPin },
         { name: 'Paiements', href: '/dashboard/student/payments', icon: CreditCard },
-        { name: 'Contacts', href: '/dashboard/student/contacts', icon: Headset },
         { name: 'Profil', href: '/dashboard/student/profile', icon: User },
       ]
     }
@@ -92,7 +93,7 @@ const roleNavigation: Record<string, NavGroup[]> = {
       items: [
         { name: 'Emploi du temps', href: '/dashboard/teacher/schedule', icon: Calendar },
         { name: 'Mes Cours', href: '/dashboard/teacher/courses', icon: BookOpen },
-        { name: 'Supports de cours', href: '/dashboard/teacher/resources', icon: Book },
+        // { name: 'Supports de cours', href: '/dashboard/teacher/resources', icon: Book },
         { name: 'Émargements', href: '/dashboard/teacher/attendance', icon: ClipboardCheck },
       ]
     },
@@ -100,7 +101,7 @@ const roleNavigation: Record<string, NavGroup[]> = {
       label: 'Communication',
       items: [
         { name: 'Messagerie', href: '/dashboard/teacher/messages', icon: Mail },
-        { name: 'Forum', href: '/dashboard/forum', icon: MessagesSquare },
+        // { name: 'Forum', href: '/dashboard/forum', icon: MessagesSquare },
         { name: 'Assistance', href: '/dashboard/tickets', icon: LifeBuoy },
       ]
     }
@@ -139,8 +140,7 @@ export function Sidebar({ role, profile, isOpen, onClose }: { role: string, prof
 
   useEffect(() => {
     if (!isOpen) { 
-      // Use rems instead of px to scale perfectly with global font-size changes
-      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '6rem' : '18rem')
+      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '18rem')
     } else {
       document.documentElement.style.setProperty('--sidebar-width', '0px')
     }
@@ -151,43 +151,47 @@ export function Sidebar({ role, profile, isOpen, onClose }: { role: string, prof
       {/* Mobile Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-primary/20 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 md:hidden"
           onClick={onClose}
         />
       )}
 
       <aside className={`
-        fixed left-0 top-0 h-full bg-white dark:bg-surface/95 backdrop-blur-sm border-r border-outline-variant/10 transition-all duration-500 ease-in-out z-50 shadow-premium flex flex-col
-        ${isCollapsed ? 'md:w-24' : 'md:w-72'}
+        fixed left-0 top-0 h-full bg-[#00185F] text-white transition-all duration-300 ease-in-out z-50 flex flex-col shadow-2xl shadow-[#00185F]/20
+        ${isCollapsed ? 'md:w-20' : 'md:w-72'}
         ${isOpen ? 'w-72 translate-x-0' : 'w-72 -translate-x-full md:translate-x-0'}
       `}>
+        {/* Toggle Button */}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:flex absolute -right-3.5 top-12 w-7 h-7 bg-white dark:bg-surface-container-highest border border-outline-variant/20 rounded-full items-center justify-center shadow-premium interactive-element z-50 group"
+          className="hidden md:flex absolute -right-3 top-10 w-6 h-6 bg-[#00185F] border border-white/20 rounded-full items-center justify-center shadow-md z-50 group hover:bg-white/10 transition-colors"
         >
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {isCollapsed ? <ChevronRight className="h-3 w-3 text-white/70 group-hover:text-white" /> : <ChevronLeft className="h-3 w-3 text-white/70 group-hover:text-white" />}
         </button>
 
-        <div className={`px-8 mt-12 mb-12 transition-all duration-500 ${isCollapsed ? 'md:px-4 md:items-center md:flex md:flex-col' : ''}`}>
-          <div className="flex items-center gap-4 mb-2">
-            <div className="w-11 h-11 rounded-[var(--radius-standard)] bg-primary/5 dark:bg-primary/10 flex items-center justify-center interactive-element shrink-0 p-2">
-              <img src="/logo-campusconnect.png" alt="Logo" className="h-full w-auto object-contain" />
+        {/* Brand */}
+        <div className={`px-8 mt-10 mb-12 transition-all duration-300 ${isCollapsed ? 'md:px-2 md:items-center md:flex md:flex-col' : ''}`}>
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="p-2 rounded-xl bg-white/10 border border-white/20 group-hover:bg-white/20 transition-all duration-300">
+              <Image src="/logo-campusconnect.png" alt="Logo" width={24} height={24} className="w-6 h-6 object-contain brightness-0 invert transition-all" />
             </div>
-            {(!isCollapsed || isOpen) && <h1 className="text-2xl font-black text-primary tracking-tighter font-headline animate-in fade-in slide-in-from-left-2 duration-500">CampusConnect</h1>}
-          </div>
-          {(!isCollapsed || isOpen) && (
-            <div className="flex items-center gap-2 mt-2 ml-1 animate-in fade-in slide-in-from-left-2 duration-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50" />
-              <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-[0.25em] opacity-30">Portail Officiel</p>
-            </div>
-          )}
+            {(!isCollapsed || isOpen) && (
+              <div className="animate-in fade-in slide-in-from-left-2 duration-300">
+                <h1 className="text-base font-black text-white tracking-tight leading-none uppercase">CampusConnect</h1>
+                <p className="text-[10px] text-blue-200/90 font-bold uppercase tracking-wider mt-1.5 opacity-80">Université de Labé</p>
+              </div>
+            )}
+          </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 space-y-9 custom-scrollbar">
-          {navigation.map((group, groupIndex) => (
-            <div key={group.label} className="entrance-right" style={{ animationDelay: `${200 + groupIndex * 100}ms` }}>
-              <h3 className="px-5 text-[9px] font-black text-on-surface-variant/30 uppercase tracking-[0.35em] mb-5">{group.label}</h3>
-              <div className="space-y-1.5">
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-4 space-y-8 custom-scrollbar">
+          {navigation.map((group, groupIndex) => (group.items.length > 0 && (
+            <div key={group.label}>
+              {(!isCollapsed || isOpen) && (
+                <h3 className="px-4 text-xs font-bold text-blue-300/70 uppercase tracking-widest mb-4">{group.label}</h3>
+              )}
+              <div className="space-y-1">
                 {group.items.map((item) => {
                   const isActive = pathname === item.href
                   const unreadMessagesCount = useUnreadMessages()
@@ -199,34 +203,63 @@ export function Sidebar({ role, profile, isOpen, onClose }: { role: string, prof
                       href={item.href}
                       onClick={onClose}
                       className={`
-                        flex items-center gap-4 py-4 px-5 rounded-[var(--radius-standard)] transition-all duration-300 group relative interactive-element
+                        flex items-center gap-4 py-3.5 md:py-2.5 px-5 md:px-4 rounded-xl transition-all duration-200 group relative
                         ${isActive 
-                          ? 'bg-primary text-white shadow-premium scale-[1.02]' 
-                          : 'text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
+                          ? 'bg-white/10 text-white shadow-sm' 
+                          : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
                         }
                       `}
                     >
-                      <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-on-surface-variant/30 group-hover:text-primary transition-all group-hover:scale-110'}`} />
-                      {(!isCollapsed || isOpen) && <span className="text-[11px] font-black uppercase tracking-widest leading-none animate-in fade-in slide-in-from-left-2 duration-300">{item.name}</span>}
+                      {isActive && (
+                        <motion.div 
+                          layoutId="active-nav-indicator"
+                          className="absolute left-0 w-1.5 h-5 bg-blue-400 rounded-r-full"
+                        />
+                      )}
+                      
+                      <item.icon className={`h-5 w-5 md:h-4.5 md:w-4.5 shrink-0 transition-all duration-200 ${isActive ? 'text-white' : 'text-blue-100/60 group-hover:text-white'} ${!isActive && 'group-hover:scale-110'}`} />
+                      
+                      {(!isCollapsed || isOpen) && (
+                        <span className={`text-sm tracking-wide ${isActive ? 'font-black' : 'font-semibold'}`}>
+                          {item.name}
+                        </span>
+                      )}
                       
                       {showBadge && (
-                         <span className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-error rounded-full shadow-[0_0_8px_rgba(186,26,26,0.5)] animate-pulse" />
+                         <span className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
                       )}
                     </Link>
                   )
                 })}
               </div>
             </div>
-          ))}
+          )))}
         </nav>
 
-        <div className="px-6 mt-8 py-8 border-t border-outline-variant/10">
+        {/* User Profile Area */}
+        <div className="p-4 border-t border-white/10 mt-auto">
+          <div className="bg-white/5 rounded-2xl p-4 border border-white/5 mb-4 group hover:border-white/20 transition-all">
+             <div className="flex items-center gap-4">
+                <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xs font-black text-white overflow-hidden shadow-sm group-hover:scale-105 transition-transform">
+                   {profile?.avatar_url ? (
+                     <img src={profile.avatar_url} className="w-full h-full object-cover" />
+                   ) : (profile?.full_name || 'U').charAt(0).toUpperCase()}
+                </div>
+                {(!isCollapsed || isOpen) && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-white truncate">{profile?.full_name?.split(' ')[0]}</p>
+                    <p className="text-xs text-blue-300/80 font-bold uppercase tracking-wider">{role}</p>
+                  </div>
+                )}
+             </div>
+          </div>
+          
           <button
             onClick={handleLogout}
-            className={`flex items-center gap-4 w-full py-4.5 px-5 text-on-surface-variant/40 hover:bg-error/5 hover:text-error transition-all rounded-[var(--radius-standard)] group ${isCollapsed && !isOpen ? 'md:justify-center' : ''}`}
+            className="flex items-center gap-4 w-full py-3 px-4 text-rose-300/80 hover:bg-rose-500/20 hover:text-rose-200 transition-all duration-200 rounded-xl group"
           >
-            <LogOut className="h-5 w-5 group-hover:opacity-100 group-hover:-translate-x-1 transition-all shrink-0" />
-            {(!isCollapsed || isOpen) && <span className="text-[11px] font-black uppercase tracking-widest animate-in fade-in slide-in-from-left-2 duration-300">Déconnexion</span>}
+            <LogOut className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+            {(!isCollapsed || isOpen) && <span className="text-xs font-bold uppercase tracking-wider">Déconnexion</span>}
           </button>
         </div>
       </aside>

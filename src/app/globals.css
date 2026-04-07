@@ -42,17 +42,9 @@
   --color-surface-container-high: #dbeafe;
   --color-surface-container-highest: #d1e2ff;
   --color-primary-fixed-dim: #b8c4ff;
-  --color-on-background: #191c1e;
+  --color-on-background: #0f172a;
   --color-secondary-fixed-dim: #b7c8e1;
   --color-tertiary-fixed-dim: #f2bc82;
-  --color-primary-fixed: #dde1ff;
-  --color-on-primary-container: #8098ff;
-  --color-inverse-primary: #b8c4ff;
-  --color-secondary: #505f76;
-  --color-on-tertiary-container: #c6955e;
-  --color-secondary-fixed: #d3e4fe;
-  --color-on-secondary-container: #54647a;
-  --color-on-tertiary-fixed: #2b1700;
 
   --font-headline: var(--font-manrope);
   --font-body: var(--font-inter);
@@ -61,32 +53,25 @@
   --radius-premium: 1.5rem;
   --radius-standard: 1rem;
   --radius-button: 2rem;
-
-  --shadow-premium-sm: 0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.01);
-  --shadow-premium-md: 0 4px 20px -5px rgba(0,0,0,0.05), 0 2px 10px -2px rgba(0,0,0,0.02);
-  --shadow-premium-lg: 0 20px 40px -12px rgba(0,0,0,0.08), 0 8px 16px -6px rgba(0,0,0,0.04);
-  --shadow-premium-layered: 0 1px 1px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02), 0 4px 4px rgba(0,0,0,0.02), 0 8px 8px rgba(0,0,0,0.02), 0 16px 16px rgba(0,0,0,0.02);
 }
 
-/* Refined Dark mode color overrides (Avoiding pure black) */
-.dark {
-  --color-background: #000821; /* Ultra deep blue instead of black */
-  --color-surface: #000c32;    /* Deep blue surface */
-  --color-on-surface: #f9fafb; 
-  --color-surface-container-lowest: #000514;
-  --color-surface-container-low: #000927;
-  --color-surface-container: #000f38;
-  --color-surface-container-high: #001242;
-  --color-surface-container-highest: #001650;
-  --color-on-surface-variant: #94a3b8; /* slate-400 for better blue harmony */
-  --color-outline: #1e293b;
-  --color-outline-variant: #0f172a;
-  --color-primary: #818cf8; /* Lighter indigo-blue for dark mode contrast */
-  --color-on-primary: #ffffff;
-  --color-primary-container: #1e1b4b;
-  --color-on-primary-container: #e0e7ff;
-  --color-surface-bright: #001a5e;
-  --color-surface-dim: #000821;
+/* Force variables for V4 and standard CSS */
+:root {
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-on-surface: #020617;
+}
+
+.dark, [data-theme='dark'] {
+  --color-background: #020617 !important;
+  --color-surface: #0f172a !important;
+  --color-on-surface: #f1f5f9 !important;
+  --color-primary: #3b82f6 !important;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
 }
 
 /* Custom Utilities */

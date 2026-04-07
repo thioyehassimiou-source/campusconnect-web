@@ -18,15 +18,28 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  themeColor: '#6366f1',
 }
 
 export const metadata: Metadata = {
   title: 'Portail Numérique - Université de Labé',
   description: 'Espace numérique de travail de l Université de Labé (Guinée).',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'CampusConnect',
+  },
+  icons: {
+    apple: '/icons/icon-192x192.png',
+  },
 }
 
 import { ToastProvider } from '@/components/ui/Toast'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
+import { UserProvider } from '@/providers/UserProvider'
+import { SWRProvider } from '@/providers/SWRProvider'
+import { OfflineBanner } from '@/components/ui/OfflineBanner'
 
 export default function RootLayout({
   children,
@@ -40,9 +53,14 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-body">
         <ThemeProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <OfflineBanner />
+          <SWRProvider>
+            <UserProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </UserProvider>
+          </SWRProvider>
         </ThemeProvider>
       </body>
     </html>

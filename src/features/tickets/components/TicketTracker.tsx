@@ -5,8 +5,9 @@ import { TicketCard } from '@/features/tickets/components/TicketCard'
 import { TicketDetailView } from '@/features/tickets/components/TicketDetailView'
 import { createTicketReply } from '@/features/tickets/actions'
 import { useRouter } from 'next/navigation'
-import { mockTickets, mockTicketActivity } from '@/features/tickets/mockData'
 import { Ticket, TicketActivity } from '@/features/tickets/types'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { LifeBuoy } from 'lucide-react'
 
 interface TicketTrackerProps {
   initialTickets: Ticket[]
@@ -15,21 +16,35 @@ interface TicketTrackerProps {
 
 export default function TicketTracker({ initialTickets, initialActivities }: TicketTrackerProps) {
   const router = useRouter()
-  const [activeTicket, setActiveTicket] = useState<Ticket>(initialTickets[0] || mockTickets[0])
+  const [activeTicket, setActiveTicket] = useState<Ticket | null>(initialTickets[0] || null)
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'resolved' | 'urgent'>('all')
   
-  const displayedTickets = initialTickets.length > 0 ? initialTickets : mockTickets
-  const activities = initialActivities.length > 0 ? initialActivities : mockTicketActivity
+  const displayedTickets = initialTickets
+  const activities = initialActivities
 
   const handleReply = async (text: string) => {
     if (!text.trim() || !activeTicket) return
-    try {
-      await createTicketReply(activeTicket.id, text)
-      router.refresh()
-    } catch (error) {
-      console.warn('Failed to send reply:', error)
-      alert('Erreur lors de l\'envoi de la réponse')
+    
+    const result = await createTicketReply({ ticketId: activeTicket.id, content: text })
+    
+    if (!result.success) {
+      alert(result.error || 'Erreur lors de l\'envoi de la réponse')
+      return
     }
+
+    router.refresh()
+  }
+
+  if (displayedTickets.length === 0) {
+    return (
+      <div className="flex gap-10 h-[calc(100vh-140px)] w-full items-center justify-center p-10 bg-background">
+        <EmptyState
+          icon={LifeBuoy}
+          title="Aucun signalement"
+          description="Vous n'avez soumis aucun ticket d'assistance pour le moment."
+        />
+      </div>
+    )
   }
 
   return (
@@ -41,7 +56,7 @@ export default function TicketTracker({ initialTickets, initialActivities }: Tic
             Mes Signalements
           </h2>
           <span className="bg-secondary-container text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-inner border border-primary/5">
-            {mockTickets.length} Total
+            {displayedTickets.length} Total
           </span>
         </div>
 
@@ -70,7 +85,7 @@ export default function TicketTracker({ initialTickets, initialActivities }: Tic
             <TicketCard 
               key={ticket.id} 
               ticket={ticket} 
-              isActive={activeTicket.id === ticket.id}
+              isActive={activeTicket?.id === ticket.id}
               onClick={() => setActiveTicket(ticket)}
             />
           ))}
@@ -78,11 +93,17 @@ export default function TicketTracker({ initialTickets, initialActivities }: Tic
       </section>
 
       {/* Main Container: Detail View */}
-      <TicketDetailView 
-        ticket={activeTicket} 
-        activities={activities.filter((a: any) => a.ticketId === activeTicket.id)}
-        onReply={handleReply}
-      />
+      {activeTicket ? (
+        <TicketDetailView 
+          ticket={activeTicket} 
+          activities={activities.filter((a: any) => a.ticketId === activeTicket.id)}
+          onReply={handleReply}
+        />
+      ) : (
+        <div className="flex-1 flex items-center justify-center bg-surface-container-low rounded-[3rem] border border-outline-variant/10">
+          <p className="text-on-surface-variant opacity-50 font-bold">Sélectionnez un ticket pour voir les détails</p>
+        </div>
+      )}
     </div>
   )
 }

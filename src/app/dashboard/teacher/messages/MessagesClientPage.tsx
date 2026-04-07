@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Send } from 'lucide-react'
 import { Conversation, Message } from '@/features/messaging/types'
 import { getMessages } from '@/features/messaging/services/messagingService'
 import { sendMessage, markMessagesAsRead } from '@/features/messaging/actions'
@@ -8,12 +9,12 @@ import { createClient } from '@/lib/supabase/client'
 import { ChatSidebar } from '@/features/messaging/components/ChatSidebar'
 import { ChatWindow } from '@/features/messaging/components/ChatWindow'
 
-interface MessagingPageProps {
+interface MessagesClientPageProps {
   initialConversations: Conversation[]
 }
 
-export default function MessagingPage({ initialConversations }: MessagingPageProps) {
-  const [conversations] = useState<Conversation[]>(initialConversations)
+export default function MessagesClientPage({ initialConversations }: MessagesClientPageProps) {
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations)
   const [activeId, setActiveId] = useState<string>(conversations[0]?.id || '')
   const [messages, setMessages] = useState<Message[]>([])
   const [messageText, setMessageText] = useState('')
@@ -39,14 +40,13 @@ export default function MessagingPage({ initialConversations }: MessagingPagePro
     fetchMessages()
 
     const channel = supabase
-      .channel(`room:${activeId}`)
+      .channel('global_messages')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${activeId}`
+          table: 'messages'
         },
         (payload) => {
           const newMessage = {
@@ -56,7 +56,30 @@ export default function MessagingPage({ initialConversations }: MessagingPagePro
             content: payload.new.content,
             createdAt: payload.new.created_at
           } as Message
-          setMessages(prev => [...prev, newMessage])
+
+          // 1. If it's for the active conversation, add to messages list
+          // BUT only if it doesn't already exist (to avoid duplicate with optimistic UI)
+          if (newMessage.conversationId === activeId) {
+            setMessages(prev => {
+              const exists = prev.some(m => m.id === newMessage.id || (m.content === newMessage.content && m.senderId === newMessage.senderId && Math.abs(new Date(m.createdAt).getTime() - new Date(newMessage.createdAt).getTime()) < 5000))
+              if (exists) return prev
+              return [...prev, newMessage]
+            })
+          }
+
+          // 2. Update conversation list preview and unread count
+          setConversations(prev => prev.map(conv => {
+            if (conv.id === newMessage.conversationId) {
+              const isMe = newMessage.senderId === currentUserId
+              return {
+                ...conv,
+                lastMessage: newMessage.content,
+                lastMessageTime: new Date(newMessage.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                unreadCount: (conv.id !== activeId && !isMe) ? (conv.unreadCount || 0) + 1 : 0
+              }
+            }
+            return conv
+          }))
         }
       )
       .subscribe()
@@ -69,8 +92,12 @@ export default function MessagingPage({ initialConversations }: MessagingPagePro
   useEffect(() => {
     if (activeId) {
       markMessagesAsRead(activeId)
+      // Reset local unread count
+      setConversations(prev => prev.map(c => 
+        c.id === activeId ? { ...c, unreadCount: 0 } : c
+      ))
     }
-  }, [activeId, messages])
+  }, [activeId, messages.length])
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault()
@@ -79,10 +106,24 @@ export default function MessagingPage({ initialConversations }: MessagingPagePro
     const text = messageText
     setMessageText('')
     
+    // OPTIMISTIC UPDATE
+    const optimisticMessage: Message = {
+      id: `temp-${Date.now()}`,
+      conversationId: activeId,
+      senderId: currentUserId || '',
+      content: text,
+      createdAt: new Date().toISOString()
+    }
+    setMessages(prev => [...prev, optimisticMessage])
+
     try {
       await sendMessage(activeId, text)
     } catch (error) {
       console.warn('Failed to send message:', error)
+      // Rollback optimistic update
+      setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id))
+      setMessageText(text) // Restore text
+      import('@/lib/logger').then(({ logger }) => logger.trackFailure('SEND_MESSAGE_ERROR', error))
     }
   }
 
@@ -106,7 +147,7 @@ export default function MessagingPage({ initialConversations }: MessagingPagePro
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-low/10">
           <div className="w-24 h-24 rounded-[2rem] bg-primary/5 flex items-center justify-center mb-8">
-            <span className="material-symbols-outlined text-4xl text-primary opacity-20">send</span>
+            <Send className="h-10 w-10 text-primary opacity-20" />
           </div>
           <h3 className="text-2xl font-black text-primary tracking-tight">Sélectionnez une conversation</h3>
         </div>

@@ -27,9 +27,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       setTheme(stored)
       document.documentElement.classList.toggle('dark', stored === 'dark')
+      document.documentElement.setAttribute('data-theme', stored)
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setTheme('dark')
       document.documentElement.classList.add('dark')
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light')
     }
   }, [])
 
@@ -38,6 +42,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const next = prev === 'light' ? 'dark' : 'light'
       localStorage.setItem('cc-theme', next)
       document.documentElement.classList.toggle('dark', next === 'dark')
+      document.documentElement.setAttribute('data-theme', next)
       return next
     })
   }, [])

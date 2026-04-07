@@ -6,7 +6,7 @@ export async function getForumThreads(category: string = 'All') {
   
   let query = supabase
     .from('forum_threads')
-    .select('*')
+    .select('id, title, author, author_avatar, category, replies, views, last_activity, is_pinned, tags')
     .order('created_at', { ascending: false })
 
   if (category !== 'All') {
@@ -20,5 +20,5 @@ export async function getForumThreads(category: string = 'All') {
     return []
   }
 
-  return data as ForumThread[]
+  return data as unknown as ForumThread[]
 }

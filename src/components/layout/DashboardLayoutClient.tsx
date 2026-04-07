@@ -21,7 +21,7 @@ export function DashboardLayoutClient({
   }, [])
 
   return (
-    <div className="min-h-screen bg-surface selection:bg-secondary-container selection:text-on-secondary-container">
+    <div className="min-h-screen bg-background selection:bg-primary/30 selection:text-primary text-on-background">
       <Sidebar 
         role={role} 
         profile={profile} 
@@ -30,8 +30,10 @@ export function DashboardLayoutClient({
       />
       
       <div 
-        className="flex flex-col min-h-screen transition-all duration-500 ease-in-out md:pl-[var(--sidebar-width,288px)]"
-        style={{ paddingLeft: isMobileMenuOpen ? '0px' : undefined }}
+        className="flex flex-col min-h-screen transition-all duration-500 ease-in-out"
+        style={{ 
+          paddingLeft: isMobileMenuOpen ? '0px' : 'var(--sidebar-width, 18rem)',
+        }}
       >
         <Navbar 
           role={role} 
@@ -39,7 +41,7 @@ export function DashboardLayoutClient({
           toggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
         />
         
-        <main className="pt-24 pb-12 px-4 md:px-8 flex-1 w-full max-w-full overflow-hidden">
+        <main className="pt-28 pb-12 px-4 md:px-10 flex-1 w-full max-w-[1600px] mx-auto overflow-hidden">
           {children}
         </main>
       </div>

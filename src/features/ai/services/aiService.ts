@@ -7,7 +7,7 @@ export async function getAIHistory() {
 
   const { data, error } = await supabase
     .from('ai_history')
-    .select('*')
+    .select('id, profile_id, query, response, context_type, created_at')
     .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
 
@@ -16,5 +16,5 @@ export async function getAIHistory() {
     return []
   }
 
-  return data
+  return data as any[]
 }

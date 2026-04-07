@@ -7,7 +7,7 @@ export async function getNotifications() {
 
   const { data, error } = await supabase
     .from('notifications')
-    .select('*')
+    .select('id, title, message, type, is_read, created_at, link')
     .eq('profile_id', user.id)
     .order('created_at', { ascending: false })
 
@@ -16,5 +16,5 @@ export async function getNotifications() {
     return []
   }
 
-  return data
+  return data as any[]
 }

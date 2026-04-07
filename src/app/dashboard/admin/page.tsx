@@ -52,28 +52,24 @@ export default async function AdminDashboard() {
           value={(totalUsers || 0).toLocaleString()} 
           icon={<Users className="h-6 w-6 text-primary" />}
           trend={{ value: 4.2, label: 'mois', isPositive: true }}
-          shape="full"
         />
         <StatsCard 
           title="Étudiants Actifs" 
           value={(totalStudents || 0).toLocaleString()} 
-          icon={<School className="h-6 w-6 text-indigo-700" />}
+          icon={<School className="h-6 w-6 text-indigo-700 dark:text-blue-400" />}
           addon="Actif"
-          shape="full"
         />
         <StatsCard 
           title="Personnel" 
           value={(totalStaff || 0).toLocaleString()} 
-          icon={<Badge className="h-6 w-6 text-slate-700" />}
+          icon={<Badge className="h-6 w-6 text-slate-700 dark:text-slate-400" />}
           addon="Permanent"
-          shape="full"
         />
         <StatsCard 
           title="État du système" 
           value="Opérationnel" 
-          icon={<Activity className="h-6 w-6 text-green-700" />}
+          icon={<Activity className="h-6 w-6 text-green-700 dark:text-emerald-400" />}
           isLive
-          shape="full"
         />
       </div>
 
@@ -89,13 +85,13 @@ export default async function AdminDashboard() {
           <QuickActionsGrid />
           
           {/* Security Visual Card */}
-          <div className="bg-primary rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-primary/30 group">
+          <div className="bg-primary rounded-xl p-8 text-white relative overflow-hidden shadow-lg shadow-primary/10 dark:shadow-none group">
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-4">
                  <ShieldCheck className="h-6 w-6 text-blue-300" />
-                 <h4 className="font-headline font-black text-xl tracking-tight">Sécurité Campus</h4>
+                 <h4 className="font-headline font-[900] text-xl tracking-tight">Sécurité Campus</h4>
               </div>
-              <p className="text-sm text-blue-100 mb-8 leading-relaxed font-medium">
+              <p className="text-sm text-blue-100 mb-8 leading-relaxed font-[500]">
                 Le système de surveillance est actuellement en mode "Haute Performance". Aucun incident signalé.
               </p>
               <div className="flex -space-x-2">
@@ -112,9 +108,9 @@ export default async function AdminDashboard() {
                 </div>
               </div>
             </div>
-            {/* Decorative background elements */}
-            <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
-            <div className="absolute -left-4 -top-4 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
+            {/* Decorative background elements (softened) */}
+            <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-1000 opacity-50"></div>
+            <div className="absolute -left-4 -top-4 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-1000 opacity-50"></div>
           </div>
         </div>
       </div>

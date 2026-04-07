@@ -4,6 +4,8 @@ import { AppNotification } from '../types'
 import { Bell, Mail, BookOpen, GraduationCap, Info, X } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { motion, AnimatePresence } from 'framer-motion'
+import { slideUp, staggerContainer, fadeIn } from '@/lib/animations'
 
 const iconMap = {
   message: Mail,
@@ -22,7 +24,12 @@ export function NotificationDrawer({
   onMarkRead: (id: string) => void
 }) {
   return (
-    <div className="absolute top-full right-0 mt-4 w-[400px] bg-white rounded-[2rem] border border-outline-variant/10 shadow-premium-lg animate-in fade-in slide-in-from-top-2 duration-300 z-50 overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+      className="absolute top-full right-0 mt-4 w-[400px] bg-white rounded-[2rem] border border-outline-variant/10 shadow-premium-lg z-50 overflow-hidden"
+    >
       <div className="p-6 border-b border-outline-variant/5 flex items-center justify-between bg-surface-container-low/30">
         <div>
           <h3 className="text-sm font-black text-primary tracking-tight">Notifications</h3>
@@ -35,12 +42,18 @@ export function NotificationDrawer({
 
       <div className="max-h-[480px] overflow-y-auto custom-scrollbar">
         {notifications.length > 0 ? (
-          <div className="divide-y divide-outline-variant/5">
+          <motion.div 
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="divide-y divide-outline-variant/5"
+          >
             {notifications.map((n) => {
               const Icon = iconMap[n.type] || Info
               return (
-                <div 
+                <motion.div 
                   key={n.id} 
+                  variants={slideUp}
                   className={`p-6 hover:bg-primary/[0.02] transition-colors group relative cursor-pointer ${!n.is_read ? 'bg-primary/[0.01]' : ''}`}
                   onClick={() => onMarkRead(n.id)}
                 >
@@ -63,17 +76,21 @@ export function NotificationDrawer({
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </motion.div>
         ) : (
-          <div className="p-20 text-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-20 text-center"
+          >
             <div className="w-16 h-16 bg-primary/5 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
               <Bell className="h-8 w-8 text-primary/20" />
             </div>
             <p className="text-xs font-black text-primary/40 uppercase tracking-widest">Aucune notification</p>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -82,6 +99,6 @@ export function NotificationDrawer({
           Tout marquer comme lu
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }

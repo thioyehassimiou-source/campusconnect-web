@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useToast } from '@/components/ui/Toast'
 
 interface InteractiveElementProps {
   children: React.ReactNode
@@ -17,10 +18,12 @@ export default function InteractiveElement({
   type = "div",
   href
 }: InteractiveElementProps) {
+  const { info } = useToast()
+
   const handleClick = (e: React.MouseEvent) => {
     if (!href) {
       e.preventDefault()
-      alert(message)
+      info(message)
     }
   }
 
@@ -30,7 +33,7 @@ export default function InteractiveElement({
     <Component 
       onClick={handleClick}
       href={href}
-      className={`${className} cursor-pointer active:scale-[0.98] transition-all duration-200`}
+      className={`${className} cursor-pointer active:scale-[0.98] transition-all duration-300`}
     >
       {children}
     </Component>

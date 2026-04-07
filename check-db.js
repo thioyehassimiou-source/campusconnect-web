@@ -24,11 +24,19 @@ async function checkData() {
   const { data: deps, error: ed } = await supabase.from('departments').select('id, name');
   console.log('Departments:', deps?.length || 0, ed ? ed.message : 'OK');
 
-  console.log('Checking services...');
-  const { data: servs, error: es } = await supabase.from('services').select('id, name');
-  console.log('Services:', servs?.length || 0, es ? es.message : 'OK');
+  console.log('Checking tickets table existence...');
+  const { data: tix, error: et } = await supabase.from('tickets').select('id').limit(1);
+  console.log('Tickets:', tix ? 'Exists' : 'NOT FOUND', et ? et.message : 'OK');
+
+  console.log('Checking grades and relations...');
+  const { data: grs, error: eg } = await supabase.from('grades').select('id, course_id').limit(1);
+  console.log('Grades:', grs ? 'Exists' : 'NOT FOUND', eg ? eg.message : 'OK');
+
+  console.log('Checking profiles columns...');
+  const { data: prof, error: ep } = await supabase.from('profiles').select('full_name, student_id, department, nom, matricule').limit(1);
+  console.log('Profiles columns test:', prof ? 'OK' : 'FAILED', ep ? ep.message : 'OK');
   
-  if (facs?.length === 0 && deps?.length === 0 && servs?.length === 0) {
+  if (facs?.length === 0 && deps?.length === 0 && !tix) {
     console.log('DATABASE IS EMPTY or RLS IS DENYING ACCESS');
   }
 }

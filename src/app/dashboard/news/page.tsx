@@ -1,10 +1,12 @@
 import { requireRole } from '@/lib/auth'
 import { announcementService } from '@/features/announcements/services/announcementService'
+import { createClient } from '@/lib/supabase/server'
 import { Megaphone, Calendar, User, ArrowRight } from 'lucide-react'
 
 export default async function NewsPage() {
   const { profile } = await requireRole(['student', 'teacher', 'admin'])
-  const announcements = await announcementService.getLatestAnnouncements(10)
+  const supabase = await createClient()
+  const announcements = await announcementService.getLatestAnnouncements(supabase, 10)
 
   return (
     <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">

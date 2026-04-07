@@ -7,9 +7,9 @@ interface AcademicInfoCardProps {
 
 export function AcademicInfoCard({ profile }: AcademicInfoCardProps) {
   const items = [
-    { label: 'Faculté', value: profile.faculty, icon: Landmark },
-    { label: 'Cursus', value: profile.curriculum, icon: History },
-    { label: 'Année', value: profile.year, icon: Calendar }
+    { label: 'Faculté', value: profile.faculty || 'N/A', icon: Landmark },
+    { label: 'Département', value: profile.department || 'N/A', icon: History },
+    { label: 'Niveau', value: profile.level || 'N/A', icon: Calendar }
   ]
 
   return (

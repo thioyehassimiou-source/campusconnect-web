@@ -6,13 +6,11 @@ import InteractiveElement from '@/components/landing/InteractiveElement'
 import { ThemeToggleLight } from '@/components/theme/ThemeToggle'
 import { LandingNavbar } from '@/components/landing/LandingNavbar'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
-  if (user) {
-    redirect('/dashboard')
-  }
 
   return (
     <div className="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen scroll-smooth overflow-x-hidden w-full">
@@ -38,11 +36,11 @@ export default async function Home() {
                 Découvrez CampusConnect, le portail numérique officiel de l'Université de Labé. Une plateforme intégrée pour une gestion académique fluide et performante.
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap w-full sm:w-auto gap-4 justify-center lg:justify-start">
-                <Link href="/register" className="w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-[2rem] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300 font-headline flex items-center justify-center gap-3 min-h-[56px] md:min-h-[64px]">
+                <Link href="/register" className="w-full sm:w-auto px-6 md:px-10 py-3 md:py-4 bg-primary text-white font-[800] uppercase tracking-widest text-[11px] sm:text-xs rounded-2xl shadow-lg shadow-black/5 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 font-headline flex items-center justify-center gap-3 min-h-[48px] md:min-h-[52px]">
                   Commencer l'aventure
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <a href="#features" className="w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 border-2 border-outline-variant text-primary font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-[2rem] hover:bg-surface-container transition-all duration-300 active:scale-95 font-headline flex items-center justify-center min-h-[56px] md:min-h-[64px]">
+                <a href="#features" className="w-full sm:w-auto px-6 md:px-10 py-3 md:py-4 border-2 border-outline-variant text-primary font-[800] uppercase tracking-widest text-[11px] sm:text-xs rounded-2xl hover:bg-surface-container transition-all duration-300 font-headline flex items-center justify-center min-h-[48px] md:min-h-[52px]">
                   Découvrir nos services
                 </a>
               </div>
@@ -94,13 +92,13 @@ export default async function Home() {
               { icon: GraduationCap, title: 'Émargements', desc: 'Validation des présences via QR Code sécurisé pour un suivi automatisé et transparent.' }
             ].map((service, i) => (
               <Link key={i} href="/login" className="block group">
-              <InteractiveElement className="p-12 bg-white/80 dark:bg-surface/80 backdrop-blur-sm rounded-[3.5rem] border border-primary/20 hover:border-primary/40 transition-all duration-500 shadow-xl shadow-primary/5 hover:shadow-primary/10 flex flex-col items-center text-center h-full">
-                <div className="w-24 h-24 rounded-[2rem] bg-primary/5 flex items-center justify-center mb-10 group-hover:bg-primary group-hover:rotate-12 transition-all duration-500">
-                  <service.icon className="h-10 w-10 text-primary group-hover:text-white transition-colors" />
+                <div className="p-10 bg-white/80 dark:bg-surface/80 backdrop-blur-sm rounded-3xl border border-primary/10 hover:border-primary/30 transition-all duration-500 shadow-lg shadow-black/5 hover:shadow-xl hover:-translate-y-2 flex flex-col items-center text-center h-full">
+                  <div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center mb-10 group-hover:bg-primary group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500">
+                    <service.icon className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+                  </div>
+                  <h3 className="text-2xl font-[900] text-primary mb-6 tracking-tight font-headline">{service.title}</h3>
+                  <p className="text-base text-on-surface-variant leading-relaxed font-medium font-body">{service.desc}</p>
                 </div>
-                <h3 className="text-3xl font-black text-primary mb-6 tracking-tight font-headline">{service.title}</h3>
-                <p className="text-lg text-on-surface-variant leading-relaxed font-medium font-body">{service.desc}</p>
-              </InteractiveElement>
               </Link>
             ))}
           </div>
@@ -114,16 +112,48 @@ export default async function Home() {
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-black mb-12 lg:mb-20 tracking-tighter text-center lg:text-left font-headline">Nos Facultés</h2>
             <div className="grid lg:grid-cols-3 gap-12">
               {[
-                { title: 'Sciences & Techniques (FST)', items: ['Informatique', 'MIAGE', 'Mathématiques Appliquées', 'Biologie & Environnement', 'Énergie Photovoltaïque'] },
-                { title: 'Admin & Gestion (FSAG)', items: ['Administration Publique', 'Économie', 'Gestion', 'Économie Sociale et Solidaire'] },
-                { title: 'Lettres & Humaines (FLSH)', items: ['Sociologie & Anthropologie', 'Langue Anglaise', 'Langue Arabe', 'Lettres Modernes'] }
+                { 
+                  title: 'Sciences & Techniques (FST)', 
+                  items: [
+                    { name: 'Informatique', slug: 'informatique' }, 
+                    { name: 'Mathématiques', slug: 'mathematiques' }, 
+                    { name: 'Biologie', slug: 'biologie' }, 
+                    { name: 'MIAGE', slug: 'miage' }, 
+                    { name: 'Photovoltaïque', slug: 'photovoltaique' }
+                  ] 
+                },
+                { 
+                  title: 'Admin & Gestion (FSAG)', 
+                  items: [
+                    { name: 'Administration Publique', slug: 'administration-publique' }, 
+                    { name: 'Économie', slug: 'economie' }, 
+                    { name: 'Gestion', slug: 'gestion' }, 
+                    { name: 'Économie Sociale Familiale', slug: 'economie-sociale-familiale' }
+                  ] 
+                },
+                { 
+                  title: 'Lettres & Humaines (FLSH)', 
+                  items: [
+                    { name: 'Sociologie & Anthropologie', slug: 'sociologie-anthropologie' },
+                    { name: 'Langue Anglaise', slug: 'langue-anglaise' },
+                    { name: 'Langue Arabe', slug: 'langue-arabe' },
+                    { name: 'Lettres Modernes', slug: 'lettres-modernes' }
+                  ] 
+                }
               ].map((faculty, i) => (
-                <InteractiveElement key={i} className="p-10 bg-white/5 backdrop-blur-xl rounded-[3rem] border border-white/10 hover:bg-white/10 transition-all">
-                  <h4 className="text-2xl font-black mb-6 text-white font-headline">{faculty.title}</h4>
-                  <ul className="space-y-4 text-sm font-medium opacity-80 font-body">
-                    {faculty.items.map((item, j) => <li key={j}>• {item}</li>)}
+                <div key={i} className="p-10 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 hover:bg-white/10 transition-all hover:-translate-y-1">
+                  <h4 className="text-2xl font-[900] mb-6 text-white font-headline">{faculty.title}</h4>
+                  <ul className="space-y-4 text-sm font-[500] font-body">
+                    {faculty.items.map((item, j) => (
+                      <li key={j}>
+                        <Link href={`/departements/${item.slug}`} className="flex items-center gap-2 opacity-80 hover:opacity-100 hover:text-white transition-all group">
+                          <span className="w-1 h-1 rounded-full bg-white/50 group-hover:bg-white inline-block"></span>
+                          <span className="group-hover:translate-x-1 transition-transform">{item.name}</span>
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
-                </InteractiveElement>
+                </div>
               ))}
             </div>
           </div>
@@ -131,16 +161,16 @@ export default async function Home() {
 
         {/* Final CTA Section */}
         <section className="py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl mx-auto">
-          <div className="w-full mx-auto bg-surface-container p-8 md:p-12 lg:p-24 text-center rounded-[2rem] lg:rounded-[3rem] border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up box-border">
+          <div className="w-full mx-auto bg-surface-container p-8 md:p-12 lg:p-24 text-center rounded-[2rem] lg:rounded-3xl border border-outline-variant/10 shadow-premium relative overflow-hidden entrance-up box-border">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
             <h2 className="text-3xl md:text-4xl lg:text-6xl font-black font-headline text-primary mb-6 md:mb-8 tracking-tighter leading-tight lg:leading-snug">Prêt à transformer votre futur ?</h2>
             <p className="text-on-surface-variant text-base md:text-lg mb-8 md:mb-12 max-w-xl mx-auto leading-relaxed font-medium">Rejoignez des milliers d'étudiants sur la plateforme académique la plus avancée de Guinée.</p>
             <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full">
-              <Link href="/register" className="w-full sm:w-auto px-6 md:px-12 py-4 md:py-5 min-h-[56px] text-center bg-primary text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3">
+              <Link href="/register" className="w-full sm:w-auto px-6 md:px-12 py-3 md:py-4 min-h-[48px] md:min-h-[52px] text-center bg-primary text-white rounded-2xl font-[800] uppercase tracking-widest text-[11px] sm:text-xs hover:-translate-y-1 active:scale-95 transition-all shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 flex items-center justify-center gap-3">
                 S'inscrire maintenant
                 <ChevronRight className="h-4 w-4" />
               </Link>
-              <Link href="/login" className="w-full sm:w-auto px-6 md:px-12 py-4 md:py-5 min-h-[56px] text-center border-2 border-primary/20 text-primary rounded-full font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-primary/5 transition-all flex items-center justify-center">
+              <Link href="/login" className="w-full sm:w-auto px-6 md:px-12 py-3 md:py-4 min-h-[48px] md:min-h-[52px] text-center border-2 border-primary/20 text-primary rounded-2xl font-[800] uppercase tracking-widest text-[11px] sm:text-xs hover:bg-primary/5 transition-all flex items-center justify-center">
                 Se connecter
               </Link>
             </div>

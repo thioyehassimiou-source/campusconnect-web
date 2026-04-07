@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { register } from './actions'
-import { Mail, Eye, EyeOff, HelpCircle, ArrowLeft, Moon, Sun, ChevronDown, User, Lock, Building, GraduationCap, Briefcase } from 'lucide-react'
+import { Mail, HelpCircle, User, Lock, Building, GraduationCap, Briefcase, ChevronDown, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useFormStatus } from 'react-dom'
 
@@ -21,24 +21,18 @@ function SubmitButton() {
       type="submit"
       disabled={pending}
       className={`
-        w-full py-5 bg-primary text-white font-headline font-black uppercase tracking-[0.25em] rounded-[var(--radius-button)] shadow-premium hover:shadow-premium-lg interactive-element text-[10px] flex items-center justify-center gap-3 transition-all duration-300
-        ${pending ? 'opacity-70 cursor-not-allowed scale-[0.98]' : 'hover:scale-[1.02]'}
+        w-full py-4.5 bg-primary text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/20 
+        ${pending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 active:scale-[0.98] transition-all'}
       `}
     >
-      {pending ? (
-        <>
-          <span className="spinner border-white/30 border-t-white" />
-          <span>Création en cours...</span>
-        </>
-      ) : (
-        'Créer mon compte'
-      )}
+      <span className="text-[10px]">
+        {pending ? 'Initialisation...' : 'Créer mon compte'}
+      </span>
     </button>
   )
 }
 
 export default function RegistrationForm({ faculties, departments, services, error }: RegistrationFormProps) {
-  const [showPassword, setShowPassword] = useState(false)
   const [selectedFaculty, setSelectedFaculty] = useState<string>('')
   const [filteredDepartments, setFilteredDepartments] = useState<any[]>([])
 
@@ -54,168 +48,127 @@ export default function RegistrationForm({ faculties, departments, services, err
   }, [selectedFaculty, departments])
 
   return (
-    <div className="w-full max-w-md mx-auto entrance-up">
-      <div className="mb-12 text-center lg:text-left">
-        <h2 className="text-4xl font-black text-primary mb-3 font-headline tracking-tighter">Créer votre compte</h2>
-        <p className="text-on-surface-variant/60 text-sm font-bold tracking-tight">Portail numérique officiel de l'Université de Labé.</p>
-      </div>
-
+    <div className="w-full">
       {error && (
-        <div className="mb-8 rounded-[var(--radius-premium)] bg-error/[0.03] p-5 border border-error/10 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm">
-          <div className="bg-error/10 p-2 rounded-full mt-0.5">
-            <HelpCircle className="h-4 w-4 text-error" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-error mb-1">Erreur d'inscription</p>
-            <p className="text-xs font-bold text-error/80 leading-relaxed">{error}</p>
-          </div>
+        <div className="mb-8 p-4 bg-rose-50 border border-rose-100 rounded-2xl animate-in shake">
+          <p className="text-xs font-bold text-rose-600 flex items-center gap-3 italic">
+            <HelpCircle className="h-4 w-4" />
+            {error}
+          </p>
         </div>
       )}
 
-      <form action={register} className="space-y-6" autoComplete="off">
-          {/* Prénom & Nom */}
-          <div className="grid grid-cols-2 gap-5">
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Prénom</label>
-              <div className="relative group">
+      <form action={register} className="space-y-5" autoComplete="off">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Prénom</label>
+              <div className="relative">
                 <input 
                   name="first-name"
                   required
                   placeholder="Jean"
                   type="text"
-                  autoComplete="off"
-                  className="w-full pl-12 pr-4 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 focus:scale-[1.01]"
+                  className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs placeholder:text-slate-300 focus:border-primary/20"
                 />
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 group-focus-within:text-primary transition-all group-focus-within:scale-110" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
               </div>
             </div>
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Nom</label>
-              <div className="relative group">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nom</label>
+              <div className="relative">
                 <input 
                   name="last-name"
                   required
                   placeholder="Dupont"
                   type="text"
-                  autoComplete="off"
-                  className="w-full pl-12 pr-4 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 focus:scale-[1.01]"
+                  className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs placeholder:text-slate-300 focus:border-primary/20"
                 />
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 group-focus-within:text-primary transition-all group-focus-within:scale-110" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
               </div>
             </div>
           </div>
 
-
-
-          {/* Matricule */}
-          <div className="space-y-2.5">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Matricule (INE)</label>
-            <div className="relative group">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Matricule (INE)</label>
+            <div className="relative">
               <input 
                 name="student_id"
                 required
                 type="text"
-                autoComplete="off"
-                pattern="^\s*[a-zA-Z]{4}\d{10}\s*$"
-                title="Le matricule doit contenir 4 lettres suivies de 10 chiffres (ex: TTHA1585331656)"
-                placeholder="Ex: TTHA1585331656"
-                className="w-full pl-12 pr-4 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 uppercase focus:scale-[1.01]"
+                pattern="^[a-zA-Z]{4}\d{10}$"
+                title="Le matricule doit être composé de 4 lettres suivies de 10 chiffres (ex: ABCD1234567890)"
+                placeholder="ABCD1234567890"
+                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs placeholder:text-slate-300 uppercase tracking-widest focus:border-primary/20"
               />
-              <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 group-focus-within:text-primary transition-all group-focus-within:scale-110" />
+              <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Faculté</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Faculté</label>
               <div className="relative group">
                 <select 
                   name="faculty"
                   required
                   value={selectedFaculty}
                   onChange={(e) => setSelectedFaculty(e.target.value)}
-                  className="w-full pl-12 pr-10 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] appearance-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface cursor-pointer focus:scale-[1.01]"
+                  className="w-full pl-10 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-xl appearance-none focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs cursor-pointer focus:border-primary/20"
                 >
-                  <option value="">Sélectionner...</option>
+                  <option value="">Choisir...</option>
                   {faculties.map((f) => (
-                    <option key={f.id} value={f.id}>{f.name || f.nom}</option>
+                    <option key={f.id} value={f.id}>{f.name}</option>
                   ))}
                 </select>
-                <Building className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 pointer-events-none group-focus-within:text-primary transition-all group-focus-within:scale-110" />
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant/20 pointer-events-none group-focus-within:scale-110 transition-all" />
+                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none" />
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none group-hover:text-primary transition-colors" />
               </div>
             </div>
 
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Département</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Département</label>
               <div className="relative group">
                 <select 
                   name="department"
                   required
                   disabled={!selectedFaculty}
-                  className="w-full pl-12 pr-10 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] appearance-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface cursor-pointer disabled:opacity-40 disabled:grayscale focus:scale-[1.01]"
+                  className="w-full pl-10 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-xl appearance-none focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs cursor-pointer disabled:opacity-30 focus:border-primary/20"
                 >
-                  <option value="">Sélectionner département...</option>
+                  <option value="">Sélectionner...</option>
                   {filteredDepartments.map((d) => (
-                    <option key={d.id} value={d.name || d.nom}>{d.name || d.nom}</option>
+                    <option key={d.id} value={d.name}>{d.name}</option>
                   ))}
                 </select>
-                <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 pointer-events-none group-focus-within:text-primary transition-all group-focus-within:scale-110" />
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant/20 pointer-events-none group-focus-within:scale-110 transition-all" />
-              </div>
-            </div>
-
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Niveau d'étude</label>
-              <div className="relative group">
-                <select 
-                  name="level"
-                  required
-                  className="w-full pl-12 pr-10 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] appearance-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface cursor-pointer focus:scale-[1.01]"
-                >
-                  <option value="Licence 1">Licence 1</option>
-                  <option value="Licence 2">Licence 2</option>
-                  <option value="Licence 3">Licence 3</option>
-                  <option value="Master 1">Master 1</option>
-                  <option value="Master 2">Master 2</option>
-                </select>
-                <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 pointer-events-none group-focus-within:text-primary transition-all group-focus-within:scale-110" />
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant/20 pointer-events-none group-focus-within:scale-110 transition-all" />
+                <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none" />
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none group-hover:text-primary transition-colors" />
               </div>
             </div>
           </div>
 
-          {/* Mot de passe */}
-          <div className="space-y-2.5">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30 ml-1">Mot de passe</label>
-            <div className="relative group">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Mot de passe</label>
+            <div className="relative">
               <input 
                 name="password"
                 required
                 minLength={8}
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
+                type="password"
                 placeholder="••••••••"
-                className="w-full pl-12 pr-12 py-4.5 bg-surface-container-low border-none rounded-[var(--radius-standard)] focus:ring-2 focus:ring-primary/20 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 focus:scale-[1.01]"
+                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 text-xs placeholder:text-slate-300 focus:border-primary/20"
               />
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant/20 group-focus-within:text-primary transition-all group-focus-within:scale-110" />
-              <button 
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-on-surface-variant/30 hover:text-primary transition-all hover:scale-110"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
             </div>
           </div>
 
-          <SubmitButton />
+          <div className="pt-4">
+            <SubmitButton />
+          </div>
         </form>
 
-      <div className="mt-10 text-center pb-8 animate-in fade-in duration-1000">
-        <p className="text-on-surface-variant/40 text-xs font-black uppercase tracking-widest">
-          Déjà un compte ? 
-          <Link href="/login" className="text-primary font-black ml-3 hover:underline decoration-2 underline-offset-4 transition-all">Se connecter</Link>
+      <div className="mt-10 text-center pb-8 border-t border-slate-50 pt-8">
+        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+          Vous avez déjà un compte ? 
+          <Link href="/login" className="text-primary font-black ml-3 hover:underline">Connexion</Link>
         </p>
       </div>
     </div>

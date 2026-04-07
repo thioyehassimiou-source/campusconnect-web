@@ -15,6 +15,7 @@ export interface Transaction {
 }
 
 export interface FinancialSummary {
+  userId: string
   remainingBalance: number
   totalPaid: number
   pendingFees: number

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { AcademicHeader } from '@/features/academic/components/AcademicHeader'
 import { AcademicFilters } from '@/features/academic/components/AcademicFilters'
 import { DepartmentCard } from '@/features/academic/components/DepartmentCard'
-import { mockDepartments } from '@/features/academic/mockData'
+import { departments } from '@/features/departments/data'
 
 export default function AcademicDepartmentsPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -19,18 +19,18 @@ export default function AcademicDepartmentsPage() {
 
       {/* Grid Canvas */}
       <div className={`grid gap-10 ${view === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-        {mockDepartments.map((dept: any) => (
-          <DepartmentCard key={dept.id} department={dept} />
+        {Object.values(departments).map((dept: any) => (
+          <DepartmentCard key={dept.slug} department={dept} />
         ))}
       </div>
 
       {/* Footer / Meta */}
       <footer className="mt-24 pt-12 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-8 text-[11px] font-black uppercase tracking-widest text-on-surface-variant/30">
-        <p>© 2024 CampusConnect - Système de Gestion Académique Intégré</p>
+        <p>© 2026 CampusConnect - Système de Gestion Académique Intégré</p>
         <div className="flex gap-10">
-          <a className="hover:text-primary transition-colors" href="#">Politique de confidentialité</a>
-          <a className="hover:text-primary transition-colors" href="#">Documentation administrative</a>
-          <a className="hover:text-primary transition-colors" href="#">Contact Support</a>
+          <span className="cursor-not-allowed opacity-50 transition-colors">Politique de confidentialité (Bientôt)</span>
+          <span className="cursor-not-allowed opacity-50 transition-colors">Documentation administrative (Bientôt)</span>
+          <span className="cursor-not-allowed opacity-50 transition-colors">Contact Support (Bientôt)</span>
         </div>
       </footer>
     </div>

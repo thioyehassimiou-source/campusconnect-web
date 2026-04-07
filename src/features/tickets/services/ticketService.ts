@@ -1,14 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { Ticket, TicketActivity } from '../types'
 
-export async function getTickets() {
+export async function getTickets(): Promise<Ticket[]> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
   const { data, error } = await supabase
     .from('tickets')
-    .select('*')
+    .select('id, title, status, priority, category, created_at, user_id, assigned_to')
     .or(`user_id.eq.${user.id},assigned_to.eq.${user.id}`)
     .order('created_at', { ascending: false })
 
@@ -17,38 +17,21 @@ export async function getTickets() {
     return []
   }
 
-  return data as Ticket[]
+  return (data as any[]).map(t => ({
+    id: t.id,
+    title: t.title,
+    status: t.status,
+    priority: t.priority,
+    category: t.category,
+    createdAt: t.created_at,
+    reference: t.id.split('-')[0].toUpperCase(),
+    description: '', // Not fetched in list
+    updatedAt: t.updated_at || t.created_at
+  }))
 }
 
-export async function getTicketActivities(ticketId: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('ticket_activities')
-    .select('*')
-    .eq('ticket_id', ticketId)
-    .order('created_at', { ascending: true })
-
-  if (error) {
-    console.warn('Error fetching ticket activities:', error)
-    return []
-  }
-
-  return data as TicketActivity[]
-}
-
-export async function createTicketReply(ticketId: string, content: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
-
-  const { error } = await supabase
-    .from('ticket_activities')
-    .insert({
-      ticket_id: ticketId,
-      content,
-      type: 'message',
-      author_id: user.id
-    })
-
-  if (error) throw error
+export async function getTicketActivities(ticketId: string): Promise<TicketActivity[]> {
+  // ticket_activities table doesn't exist in the current schema
+  // Return empty array to prevent page crash
+  return []
 }

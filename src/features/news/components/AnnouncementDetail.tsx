@@ -13,9 +13,9 @@ export function AnnouncementDetail({ announcement }: AnnouncementDetailProps) {
       <div className="max-w-5xl mx-auto py-16 px-10">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-3 mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-          <a className="hover:text-primary transition-colors" href="#">Annonces</a>
+          <span className="opacity-50">Annonces</span>
           <ChevronRight className="h-4 w-4 opacity-50" />
-          <a className="hover:text-primary transition-colors" href="#">{announcement.category}</a>
+          <span className="opacity-50">{announcement.category}</span>
           <ChevronRight className="h-4 w-4 opacity-50" />
           <span className="text-on-surface">Détails</span>
         </nav>

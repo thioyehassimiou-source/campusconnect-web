@@ -5,6 +5,9 @@ import Groq from 'groq-sdk'
 
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now()
+  const modelUsed = 'llama-3.3-70b-versatile'
+  
   try {
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY || 'missing_key_build_bypass'
@@ -16,13 +19,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { messages, role, confirmed = false } = await req.json()
+    const { messages, role } = await req.json()
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages' }, { status: 400 })
     }
 
-    // RATE LIMITING: 20 AI calls per hour per user
+    // LIMIT MEMORY: Keep only the system prompt and last 6 messages for context
+    const limitedMessages = messages.slice(-6)
+
+    // 1. RATE LIMITING (Lean version)
     const oneHourAgo = new Date(Date.now() - 3600000).toISOString()
     const { count: recentCalls } = await supabase
       .from('ai_analytics')
@@ -33,222 +39,181 @@ export async function POST(req: NextRequest) {
     if (recentCalls && recentCalls >= 20) {
       return NextResponse.json({ 
         error: 'Rate limit exceeded', 
-        message: 'Vous avez atteint la limite de 20 requêtes par heure. Réessayez dans quelques minutes.',
+        message: 'Limite de 20 requêtes/heure atteinte.',
         rate_limited: true
       }, { status: 429 })
     }
 
-    // 1. Fetch Contextual Data
-    const [gradesRes, scheduleRes, assignmentsRes] = await Promise.all([
-      supabase.from('grades').select('grade, course:courses(credits)').eq('student_id', user.id),
-      supabase.from('schedule').select('*, course:courses(title)').eq('profile_id', user.id).gte('end_time', new Date().toISOString()).order('start_time', { ascending: true }).limit(5),
-      supabase.from('assignments').select('*').eq('student_id', user.id).eq('status', 'pending').order('deadline', { ascending: true }).limit(3)
+    // 2. SELECTIVE & LEAN CONTEXT (Optimized for < 5s latency)
+    const lastUserQuery = limitedMessages[limitedMessages.length - 1]?.content?.toLowerCase() || ""
+    const now = new Date()
+    
+    // Parallel fetching of essential data only
+    const [gradesRes, scheduleRes, assignmentsRes, notificationsRes] = await Promise.all([
+      supabase.from('grades').select('grade, course:courses(title)').eq('student_id', user.id).limit(20),
+      supabase.from('schedules').select('start_time, course:courses(title, code, location)').eq('profile_id', user.id).gte('end_time', now.toISOString()).order('start_time', { ascending: true }).limit(3),
+      supabase.from('assignments').select('title, deadline, course:courses(title)').eq('student_id', user.id).eq('status', 'pending').order('deadline', { ascending: true }).limit(3),
+      supabase.from('notifications').select('title, created_at').eq('profile_id', user.id).order('created_at', { ascending: false }).limit(2)
     ])
 
     const gpaData = gradesRes.data || []
     const gpa = gpaData.length > 0 
       ? (gpaData.reduce((acc: number, curr: any) => acc + (curr.grade || 0), 0) / gpaData.length).toFixed(2)
-      : 'N/A'
+      : '0.00'
     
     const context = {
-      user: {
-        full_name: user.user_metadata?.full_name || 'Étudiant',
-        role: role,
-        gpa: gpa,
-        total_grades: gpaData.length
-      },
-      upcoming_classes: scheduleRes.data?.map(s => ({
-        title: s.course?.title,
-        time: `${new Date(s.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(s.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`,
-        location: s.location
-      })) || [],
-      pending_assignments: assignmentsRes.data?.map(a => ({
-        title: a.title,
-        deadline: new Date(a.deadline).toLocaleDateString('fr-FR')
-      })) || []
+      time: now.toLocaleString('fr-FR', { timeZone: 'Africa/Conakry' }),
+      student: { name: user.user_metadata?.full_name, gpa, role },
+      upcoming_classes: scheduleRes.data?.map(s => ({ 
+        title: (s.course as any)?.title || 'Cours', 
+        time: new Date(s.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) 
+      })),
+      assignments: assignmentsRes.data?.map(a => ({ 
+        title: a.title, 
+        course: (a.course as any)?.title,
+        due: new Date(a.deadline).toLocaleDateString('fr-FR') 
+      })),
+      recent_alerts: notificationsRes.data?.map(n => n.title)
     }
 
-    const startTime = Date.now()
-    let modelUsed = 'llama-3.3-70b-versatile'
+    // 2. MASTER SYSTEM PROMPT (Phase 2 - Strategic Rules)
+    const agents: Record<string, string> = {
+      coach: "Tu es un Coach Académique. Ton ton est motivant et tu utilises le 'tu'. Priorise l'organisation et la réussite.",
+      admin: "Tu es un Assistant Administratif. Ton ton est formel et tu utilises le 'vous'. Sois précis sur les règlements.",
+      teaching: "Tu es un Assistant Pédagogique. Aide l'enseignant à analyser l'engagement et les supports de cours."
+    }
 
-    // 2. Define Tools
+    let currentRole = role === 'teacher' ? agents.teaching : agents.coach
+    if (lastUserQuery.includes('règlement') || lastUserQuery.includes('inscription') || lastUserQuery.includes('administration')) {
+      currentRole = agents.admin
+    }
+
+    const systemPrompt = `
+      # RÔLE & MISSION : COACH ACADÉMIQUE
+      Tu es un partenaire académique intelligent et proactif pour les étudiants de l’Université de Labé.
+      Ta mission est d’accompagner l’étudiant sur le LONG TERME pour améliorer ses performances, son organisation et sa réussite.
+
+      # ANALYSE & IMPACT (V5)
+      1. Détection Intelligente : Analyse les données situées dans (${JSON.stringify(context)}) pour détecter les points faibles, les retards potentiels ou les opportunités d'amélioration.
+      2. Mesure d'Impact : Tes conseils doivent viser l'amélioration des notes, la régularité des révisions et l'optimisation de l'organisation.
+      3. Feedback & Adaptation : Prends en compte les échanges précédents et les retours de l’étudiant pour ajuster ton comportement et tes suggestions.
+
+      # RÈGLES DE CONFIANCE & CONTRÔLE
+      - Explique TOUJOURS "Pourquoi" : "J'ai remarqué [TENDANCE], c'est pourquoi je te propose de [ACTION] pour améliorer [OBJECTIF]."
+      - Score de Confiance (Confidence) : 
+        - CONFIDENCE >= 0.6 : Propose directement l'action via le JSON structuré.
+        - CONFIDENCE < 0.6 : Demande poliment confirmation par texte.
+      - Non-intrusif : Propose, n'impose jamais. Respecte le confort de l'utilisateur.
+
+      # FORMAT DE RÉPONSE
+      - RÉPONSE SIMPLE : Texte clair, bienveillant et orienté résultat.
+      - ACTION (JSON UNIQUEMENT) : 
+        {
+          "type": "action",
+          "action": "NOM_ACTION",
+          "confidence": 0.9,
+          "data": { ... },
+          "message": "Explication de l'impact : J'ai vu que [RAISON ACADÉMIQUE], je te propose donc [ACTION] pour [BÉNÉFICE MESURABLE]."
+        }
+
+      # RÈGLES D'OR
+      - Langue : Français naturel. Pas d'hallucinations.
+      - Contexte de conversation : ${JSON.stringify(limitedMessages.map(m => m.role + ": " + m.content.substring(0, 50)))}
+    `
+
     const tools: any[] = [
       {
         type: 'function',
         function: {
-          name: 'send_notification',
-          description: 'Envoie une notification réelle à l\'utilisateur.',
+          name: 'manage_study_flow',
+          description: 'Action réelle : créer un rappel ou afficher les devoirs.',
           parameters: {
             type: 'object',
             properties: {
-              title: { type: 'string', description: 'Le titre de la notification' },
-              content: { type: 'string', description: 'Le message détaillé' },
-              type: { type: 'string', enum: ['info', 'warning', 'success'], description: 'Le type de notification' }
+              action: { type: 'string', enum: ['create_reminder', 'list_assignments'] },
+              subject: { type: 'string' },
+              date: { type: 'string' },
+              confidence: { type: 'number', description: 'Score entre 0 et 1' }
             },
-            required: ['title', 'content']
+            required: ['action', 'confidence']
           }
-        }
-      },
-      {
-        type: 'function',
-        function: {
-          name: 'create_study_reminder',
-          description: 'Programme un rappel de révision dans le planning.',
-          parameters: {
-            type: 'object',
-            properties: {
-              course_title: { type: 'string', description: 'Le nom du cours à réviser' },
-              datetime: { type: 'string', description: 'La date et l\'heure au format ISO' }
-            },
-            required: ['course_title', 'datetime']
-          }
-        }
-      },
-      {
-        type: 'function',
-        function: {
-          name: 'analyze_pedagogical_status',
-          description: "Analyse le statut académique et pédagogique de l'étudiant. Croise les notes, l'assiduité et le planning pour détecter des problèmes ou des opportunités d'amélioration.",
-          parameters: { type: 'object', properties: {} }
         }
       }
     ]
 
-    // 3. System Prompt with CampusConnect Context
-    const univContext = `
-      Contexte institutionnel : Plateforme éducative CampusConnect.
-      Ton rôle est de répondre avec précision aux questions de l'étudiant en utilisant EXCLUSIVEMENT les données en temps réel ci-dessous.
-      Si l'étudiant te pose une question (ex: "Mes devoirs"), réponds-lui d'abord avec un texte clair. Ensuite, tu peux proposer d'agir avec tes outils.
-      Ne réponds JAMAIS uniquement par un outil sans écrire de texte.
-    `
-
-    // 4. Agent Factory & Specialized Prompts
-    const agents: Record<string, string> = {
-      academic_coach: `Tu es le Coach Académique CampusConnect. Ton rôle est d'analyser les performances, d'identifier les lacunes et de proposer des plans de révision.`,
-      pedagogical_assistant: `Tu es l'Assistant Ingénierie Pédagogique CampusConnect. Tu aides les enseignants à optimiser leurs cours et à analyser l'engagement.`,
-      system_supervisor: `Tu es le Superviseur Système. Tu surveilles l'usage et la santé de l'IA.`
-    }
-
-    let activeAgent = role === 'teacher' ? agents.pedagogical_assistant : agents.academic_coach
-    if (messages[messages.length - 1].content.toLowerCase().includes('admin')) {
-      activeAgent = agents.system_supervisor
-    }
-
-    const systemPrompt = `
-      ${activeAgent}
-
-      ${univContext}
-
-      DONNÉES EN TEMPS RÉEL (Base de réponse) :
-      ${JSON.stringify(context, null, 2)}
-      
-      INSTRUCTION STRICTE : Formule toujours une réponse textuelle complète à l'utilisateur. Utilise les outils uniquement pour compléter ta réponse.
-    `
-
-    // 5. Execution Loop (Multi-step Workflow)
-    let currentMessages = [{ role: 'system' as const, content: systemPrompt }, ...messages]
-    const workflowSteps: string[] = []
+    let groqMessages = [{ role: 'system' as const, content: systemPrompt }, ...limitedMessages]
     let finalContent = ""
-    let iterations = 0
+    let isActionJSON = false
 
-    while (iterations < 3) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
+    try {
       const response = await groq.chat.completions.create({
         model: modelUsed,
-        messages: currentMessages,
+        messages: groqMessages,
         tools,
         tool_choice: 'auto',
-        temperature: 0.3,
-      })
+        temperature: 0.1,
+        max_tokens: 512,
+      }, { signal: controller.signal })
 
       const responseMessage = response.choices[0].message
-      currentMessages.push(responseMessage as any)
-
+      
       if (responseMessage.tool_calls) {
-        const availableFunctions: any = {
-          send_notification: async (args: any) => {
-            // DEDUPLICATION: prevent same notification within 5 minutes
-            const fiveMinAgo = new Date(Date.now() - 300000).toISOString()
-            const { count: recent } = await supabase
-              .from('notifications')
-              .select('*', { count: 'exact', head: true })
-              .eq('profile_id', user.id)
-              .eq('title', args.title)
-              .gte('created_at', fiveMinAgo)
-            
-            if (recent && recent > 0) {
-              return { result: "Notification déjà envoyée récemment (anti-doublon actif)" }
-            }
-            const { error: notifErr } = await supabase.from('notifications').insert({ profile_id: user.id, title: args.title, content: args.content, type: args.type || 'info' })
-            if (notifErr) return { result: `Erreur base de données (notifications): ${notifErr.message}` }
-            return { result: "Notification envoyée" }
-          },
-          create_study_reminder: async (args: any) => {
-            // DEDUPLICATION: prevent same reminder within 5 minutes
-            const fiveMinAgo = new Date(Date.now() - 300000).toISOString()
-            const { count: recent } = await supabase
-              .from('notifications')
-              .select('*', { count: 'exact', head: true })
-              .eq('profile_id', user.id)
-              .ilike('title', `%${args.course_title}%`)
-              .gte('created_at', fiveMinAgo)
-            
-            if (recent && recent > 0) {
-              return { result: "Rappel déjà programmé récemment (anti-doublon actif)" }
-            }
-            const { error: notifErr } = await supabase.from('notifications').insert({ profile_id: user.id, title: `Rappel : ${args.course_title}`, content: `Révision le ${new Date(args.datetime).toLocaleString('fr-FR')}`, type: 'success' })
-            if (notifErr) return { result: `Erreur base de données (notifications): ${notifErr.message}` }
-            return { result: "Rappel de révision programmé" }
-          },
-          analyze_pedagogical_status: async () => {
-            return { result: `Analyse terminée. Statut : ${context.user.gpa >= '12' ? 'Excellent' : 'Besoin de soutien'}. Basé sur ${context.user.total_grades} contrôles.` }
+        const toolCall = responseMessage.tool_calls[0]
+        const args = JSON.parse(toolCall.function.arguments)
+        
+        // GATING LOGIC: Only execute tool and return JSON if confidence >= 0.6
+        if ((args.confidence || 0) >= 0.6) {
+          isActionJSON = true
+          if (args.action === 'create_reminder') {
+            await supabase.from('notifications').insert({ profile_id: user.id, title: `Rappel : ${args.subject}`, content: `Prévu pour le ${new Date(args.date).toLocaleString()}`, type: 'success' })
           }
-        }
-
-        for (const toolCall of responseMessage.tool_calls) {
-          const functionName = toolCall.function.name
-          const functionArgs = JSON.parse(toolCall.function.arguments)
-          workflowSteps.push(`Action : ${functionName}`)
           
-          const functionResponse = await availableFunctions[functionName](functionArgs)
-          
-          currentMessages.push({
-            tool_call_id: toolCall.id,
-            role: 'tool',
-            name: functionName,
-            content: JSON.stringify(functionResponse),
-          } as any)
-
-          // Analytics
-          const { error: analyticsErr } = await supabase.from('ai_analytics').insert({
-            profile_id: user.id,
-            query_type: 'workflow_step',
-            action_triggered: functionName,
-            status: 'success',
-            model_used: modelUsed
+          finalContent = JSON.stringify({
+            type: "action",
+            action: args.action,
+            confidence: args.confidence,
+            data: args,
+            message: responseMessage.content || `J'ai remarqué une priorité pour ${args.subject}, je te propose de valider cette action.`
           })
-          if (analyticsErr) console.warn('Non-fatal API Analytics Error:', analyticsErr.message)
+        } else {
+          // Low confidence: transform tool call into a proactive question
+          finalContent = `J'ai remarqué une opportunité pour ${args.subject || 'tes études'}. Souhaites-tu que j'organise cela pour toi ?`
         }
-        iterations++
       } else {
         finalContent = responseMessage.content || ""
-        break
       }
+    } catch (err: any) {
+      if (err.name === 'AbortError' || err.message?.includes('timeout')) {
+        return NextResponse.json({ content: "Je traite ta demande... vérifie ton tableau de bord dans un instant !", agent: 'Système' })
+      }
+      throw err
+    } finally {
+      clearTimeout(timeoutId)
     }
 
-    // FINAL RESPONSE
-    if (!finalContent && workflowSteps.length > 0) {
-      finalContent = "J'ai effectué les actions demandées."
-    } else if (!finalContent) {
-      finalContent = "Je n'ai pas d'information supplémentaire à fournir."
-    }
+    if (!finalContent) finalContent = "Je m'excuse, je n'ai pas pu formuler une réponse. Peux-tu préciser ?"
+
+    await supabase.from('ai_analytics').insert({
+      profile_id: user.id,
+      query_type: 'p4_response',
+      model_used: modelUsed,
+      status: 'success',
+      latency_ms: Date.now() - startTime
+    })
 
     return NextResponse.json({ 
       content: finalContent,
-      steps: workflowSteps,
-      agent: role === 'teacher' ? 'Assistant Pédagogique' : 'Coach Académique'
+      agent: "Intelligent Partner v4",
+      is_json: isActionJSON || (finalContent.startsWith('{') && finalContent.includes('"type":"action"'))
     })
   } catch (error: any) {
-    console.warn('AI API Error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    console.error('PHASE 4 API ERROR:', error)
+    return NextResponse.json({ error: "Service Partenaire temporairement interrompu." }, { status: 500 })
   }
 }
+
+
+

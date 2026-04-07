@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation'
 export async function register(formData: FormData) {
   const rawStudentId = formData.get('student_id') as string
   const studentId = rawStudentId ? rawStudentId.trim().toUpperCase() : ''
-  const firstName = formData.get('first_name') as string
-  const lastName = formData.get('last_name') as string
+  const firstName = formData.get('first-name') as string
+  const lastName = formData.get('last-name') as string
   const fullName = `${firstName} ${lastName}`.trim()
   const password = formData.get('password') as string
   const confirmPassword = formData.get('confirm_password') as string
@@ -51,11 +51,13 @@ export async function register(formData: FormData) {
       .from('profiles')
       .upsert({
         id: data.user.id,
+        nom: fullName,
         full_name: fullName,
         role: role,
         matricule: studentId,
-        student_id: studentId, // Keeping this field as backup if it was used elsewhere
-        faculty: faculty,
+        student_id: studentId,
+        faculty_id: !isNaN(Number(faculty)) ? Number(faculty) : null, // Store numeric ID if available
+        departement: department,
         department: department,
         level: level,
         updated_at: new Date().toISOString()

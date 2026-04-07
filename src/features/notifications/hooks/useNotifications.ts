@@ -1,33 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import useSWR, { mutate as globalMutate } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { AppNotification } from '../types'
 
+import { useUser } from '@/providers/UserProvider'
+
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<AppNotification[]>([])
-  const [unreadCount, setUnreadCount] = useState(0)
+  const { user, loading: userLoading } = useUser()
   const supabase = createClient()
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
+  const { data: notifications = [], error, mutate } = useSWR<AppNotification[]>(
+    user ? ['notifications', user.id] : null,
+    async () => {
       const { data } = await supabase
         .from('notifications')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20)
 
-      if (data) {
-        setNotifications(data as AppNotification[])
-        setUnreadCount(data.filter(n => !n.is_read).length)
-      }
+      return (data || []) as AppNotification[]
+    },
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 1000 * 30, // 30 seconds
     }
+  )
 
-    fetchNotifications()
+  const unreadCount = notifications.filter(n => !n.is_read).length
 
+  useEffect(() => {
     // Subscribe to new notifications
     const channel = supabase
       .channel('public:notifications')
@@ -39,7 +42,7 @@ export function useNotifications() {
           table: 'notifications'
         },
         () => {
-          fetchNotifications()
+          mutate()
         }
       )
       .subscribe()
@@ -47,19 +50,32 @@ export function useNotifications() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase])
+  }, [supabase, mutate])
 
   const markAsRead = async (id: string) => {
+    // Optimistic update
+    const newNotifications = notifications.map(n => 
+      n.id === id ? { ...n, is_read: true } : n
+    )
+    
+    mutate(newNotifications, false) // Update locally without revalidating immediately
+
     const { error } = await supabase
       .from('notifications')
       .update({ is_read: true })
       .eq('id', id)
     
-    if (!error) {
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
-      setUnreadCount(prev => Math.max(0, prev - 1))
+    if (error) {
+      // Revert if error
+      mutate()
     }
   }
 
-  return { notifications, unreadCount, markAsRead }
+  return { 
+    notifications, 
+    unreadCount, 
+    markAsRead, 
+    loading: !notifications && !error,
+    error 
+  }
 }

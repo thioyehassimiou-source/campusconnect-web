@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import RegistrationForm from './RegistrationForm'
+import { Sparkles, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import Image from 'next/image'
 
 export default async function RegisterPage({
   searchParams,
@@ -12,84 +14,59 @@ export default async function RegisterPage({
 
   const supabase = await createClient()
   
-  // Fetch faculties (priority to 'nom' over 'name')
-  const { data: faculties, error: facError } = await supabase
-    .from('faculties')
-    .select('id, nom')
-    .order('id')
-
-  // Fetch departments (priority to 'nom' over 'name')
-  const { data: departments, error: depError } = await supabase
-    .from('departments')
-    .select('id, nom, faculty_id')
-    .order('id')
-
-  // Fetch services (priority to 'nom' over 'name')
-  const { data: services, error: servError } = await supabase
-    .from('services')
-    .select('id, nom')
-    .order('id')
-
-  if (facError) console.warn('Faculties error:', facError.message)
-  if (depError) console.warn('Departments error:', depError.message)
-  if (servError) console.warn('Services error:', servError.message)
+  const { data: faculties } = await supabase.from('faculties').select('id, name').order('id')
+  const { data: departments } = await supabase.from('departments').select('id, name, faculty_id').order('id')
+  const { data: services } = await supabase.from('services').select('id, name').order('id')
 
   return (
-    <main className="flex min-h-screen">
-      {/* Section Gauche: Identité visuelle (Editorial Split) */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-primary">
-        <div className="absolute inset-0 z-0">
-          <img
-            className="w-full h-full object-cover mix-blend-overlay opacity-20"
-            alt="University Library"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC90xq0bAp2LpzOuJLA9wey7W2zmDbba8ycB_4INEOHuv1InB6g5-MRUKiZGkyHxhcsGa-6RaKmLGJfUEDPnbsmJWpYUsU7XB7Sc-pZytJakajsdRt0ZZ-Ncno-n0VTCMgKw5Vl1iUBAd_tK94U1E-m9tezbaOgYCqUaCJZCpp-E6fQ2g3EPhpQalQD828sHhr5Tgyg_pAxgt6FFyUPdeTGKTSs967WfWsC-y0hQ5ouDkPtqiw3yZF___GUx6tFw7xxR2s66LGPT-w"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-container to-transparent opacity-95"></div>
-        </div>
+    <main className="flex min-h-screen bg-white overflow-hidden font-body">
+      {/* Section Gauche: Identité visuelle */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-16 bg-primary overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-full bg-white/5 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/logo-campusconnect.png" alt="Logo" className="h-8 w-auto border-none" />
-            <h1 className="text-2xl font-headline font-extrabold tracking-tight text-white">CampusConnect</h1>
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="p-2 bg-white rounded-xl shadow-lg">
+              <Image src="/logo-campusconnect.png" alt="Logo" width={28} height={28} className="w-7 h-7 object-contain" />
+            </div>
+            <h1 className="text-xl font-black tracking-tighter text-white uppercase font-headline">CampusConnect</h1>
           </Link>
         </div>
+
         <div className="relative z-10 max-w-lg">
-          <h2 className="text-5xl font-headline font-bold text-white leading-tight mb-6">Rejoignez l'excellence à Labé.</h2>
-          <p className="text-white/70 text-lg leading-relaxed font-medium font-body">
-            Accédez à vos cours, émargements et ressources académiques de l'Université de Labé via votre portail personnel sécurisé.
+          <h2 className="text-6xl font-black text-white leading-[0.9] tracking-tighter mb-8 font-headline">
+            Tracez votre <br/>
+            <span className="text-blue-200 italic">Avenir.</span>
+          </h2>
+          <p className="text-blue-100 text-lg font-medium leading-relaxed opacity-80">
+            Rejoignez la plateforme numérique phare de l'Université de Labé.
           </p>
-          <div className="mt-12 flex items-center gap-6">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 w-10 rounded-full border-2 border-primary bg-surface-container-low">
-                  <img 
-                    className="h-full w-full rounded-full object-cover"
-                    src={`https://i.pravatar.cc/150?u=${i + 10}`}
-                    alt="User"
-                  />
-                </div>
-              ))}
-            </div>
-            <span className="text-white/60 text-sm font-bold italic font-headline uppercase tracking-widest">+5,000 Étudiants Actifs</span>
-          </div>
         </div>
-        <div className="relative z-10 text-white/40 text-[10px] font-black tracking-[0.3em] uppercase">
-          © 2026 Université de Labé • Powered by CampusConnect
+
+        <div className="relative z-10 text-[10px] font-black text-blue-200/50 uppercase tracking-[0.4em]">
+          © 2026 Université de Labé
         </div>
       </div>
 
-      {/* Section Droite: Formulaire (Canvas) */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white text-on-surface relative overflow-y-auto">
-        {/* Mobile Header Overlay */}
-        <div className="lg:hidden absolute top-8 left-8 z-20">
-          <img src="/logo-campusconnect.png" alt="Logo" className="h-8 w-auto" />
+      {/* Section Droite: Formulaire */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-16 relative overflow-y-auto">
+        <div className="w-full max-w-md relative z-10">
+          <div className="mb-10">
+            <Link href="/" className="lg:hidden flex items-center gap-2 w-fit px-4 py-2 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-black text-primary uppercase tracking-widest mb-8 hover:bg-slate-100 transition-colors">
+              <ArrowLeft className="h-4 w-4" />
+              Retour à l'accueil
+            </Link>
+            <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tighter font-headline">Inscription</h2>
+            <p className="text-slate-400 text-sm font-medium">Rejoignez-nous en quelques étapes.</p>
+          </div>
+
+          <RegistrationForm 
+            faculties={faculties || []} 
+            departments={departments || []} 
+            services={services || []} 
+            error={error}
+          />
         </div>
-        
-        <RegistrationForm 
-          faculties={faculties || []} 
-          departments={departments || []} 
-          services={services || []} 
-          error={error}
-        />
       </div>
     </main>
   )

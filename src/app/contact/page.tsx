@@ -40,7 +40,6 @@ export default function ContactPage() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-12">
-            {/* Contact Info */}
             <div className="lg:col-span-1 space-y-8 animate-in fade-in slide-in-from-left-4 duration-700 delay-200">
               <InteractiveElement className="p-8 bg-white dark:bg-surface rounded-3xl border border-outline-variant/10 shadow-premium">
                 <div className="flex items-center gap-6">
@@ -49,7 +48,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-40 mb-1">Email</p>
-                    <p className="font-headline font-black text-primary text-sm">support@univ-labe.edu.gn</p>
+                    <p className="font-headline font-black text-primary text-sm">contact@univ-labe.edu.gn</p>
                   </div>
                 </div>
               </InteractiveElement>
@@ -61,7 +60,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-40 mb-1">Téléphone</p>
-                    <p className="font-headline font-black text-primary text-sm">+224 000 00 00 00</p>
+                    <p className="font-headline font-black text-primary text-sm">(+224) 629 00 58 07</p>
                   </div>
                 </div>
               </InteractiveElement>
@@ -73,7 +72,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-40 mb-1">Localisation</p>
-                    <p className="font-headline font-black text-primary text-sm">Campus Universitaire, Labé - République de Guinée</p>
+                    <p className="font-headline font-black text-primary text-sm">BP: 210-Labé, Hafia - Rép. de Guinée</p>
                   </div>
                 </div>
               </InteractiveElement>

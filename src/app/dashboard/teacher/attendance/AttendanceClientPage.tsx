@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Filter, Search, CheckCircle2, XCircle, AlertCircle, Clock } from 'lucide-react'
+import { Filter, Search, CheckCircle2, XCircle, AlertCircle, Clock, QrCode, X } from 'lucide-react'
 import { markAttendance } from '@/features/attendance/actions'
 import { useToast } from '@/components/ui/Toast'
+import QRGenerator from '@/features/attendance/components/QRGenerator'
 
 interface AttendanceClientPageProps {
   initialCourses: any[]
@@ -14,6 +15,7 @@ export default function AttendanceClientPage({ initialCourses, initialAttendance
   const { toast } = useToast()
   const [activeCourse, setActiveCourse] = useState(initialCourses[0]?.id || '')
   const [loading, setLoading] = useState(false)
+  const [showQR, setShowQR] = useState(false)
 
   const handleValidate = async () => {
     setLoading(true)
@@ -27,6 +29,8 @@ export default function AttendanceClientPage({ initialCourses, initialAttendance
     }
   }
 
+  const currentCourse = initialCourses.find(c => c.id === activeCourse)
+
   const students = initialAttendance.map((a: any) => ({
     id: a.id,
     name: a.profile?.full_name || 'Étudiant',
@@ -37,6 +41,24 @@ export default function AttendanceClientPage({ initialCourses, initialAttendance
 
   return (
     <div className="max-w-[1400px] mx-auto animate-in fade-in duration-700 pb-20">
+      {/* QR Code Modal Overlay */}
+      {showQR && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="relative w-full max-w-md animate-in zoom-in duration-300">
+            <button 
+              onClick={() => setShowQR(false)}
+              className="absolute -top-12 right-0 p-2 text-white/70 hover:text-white transition-colors"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <QRGenerator 
+              courseId={activeCourse} 
+              courseName={currentCourse?.title} 
+            />
+          </div>
+        </div>
+      )}
+
       {/* Search & Filter Bar */}
       <div className="flex flex-col md:flex-row gap-6 mb-10">
         <div className="flex-1 relative group">
@@ -47,9 +69,12 @@ export default function AttendanceClientPage({ initialCourses, initialAttendance
             type="text" 
           />
         </div>
-        <button className="flex items-center gap-3 px-6 py-4 bg-white border border-outline-variant/10 rounded-2xl text-sm font-bold text-on-surface hover:bg-surface-container-low transition-all shadow-sm">
-          <Filter className="h-5 w-5 text-on-surface-variant" />
-          Scanner Code QR
+        <button 
+          onClick={() => setShowQR(true)}
+          className="flex items-center gap-3 px-6 py-4 bg-primary text-white rounded-2xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+        >
+          <QrCode className="h-5 w-5" />
+          Générer Code QR
         </button>
       </div>
 
@@ -125,13 +150,13 @@ export default function AttendanceClientPage({ initialCourses, initialAttendance
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${student.status === 'present' ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-surface-container-high text-on-surface-variant opacity-20 hover:opacity-100'}`}>
+                    <button className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${student.status === 'present' ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-surface-container-high text-on-surface-variant opacity-50 group-hover/btn:opacity-100'}`}>
                       <CheckCircle2 className="h-6 w-6" />
                     </button>
-                    <button className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${student.status === 'absent' ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-surface-container-high text-on-surface-variant opacity-20 hover:opacity-100'}`}>
+                    <button className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${student.status === 'absent' ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-surface-container-high text-on-surface-variant opacity-50 group-hover/btn:opacity-100'}`}>
                       <XCircle className="h-6 w-6" />
                     </button>
-                    <button className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant opacity-20 hover:opacity-100 transition-all">
+                    <button className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant opacity-50 group-hover/btn:opacity-100 transition-all">
                       <AlertCircle className="h-6 w-6" />
                     </button>
                   </div>

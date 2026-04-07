@@ -7,7 +7,7 @@ export async function getSchedule() {
   if (!user) return []
 
   const { data, error } = await supabase
-    .from('schedule')
+    .from('schedules')
     .select(`
       *,
       course:courses(*)

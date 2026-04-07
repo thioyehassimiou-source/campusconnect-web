@@ -1,4 +1,6 @@
 import { Edit, Eye } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { slideUp, buttonClickProps } from '@/lib/animations'
 
 interface TeacherCourseCardProps {
   id: string
@@ -19,7 +21,12 @@ export function TeacherCourseCard({ code, title, schedule, image, progress, stud
   }
 
   return (
-    <div className="card-premium p-5 flex items-center gap-6 group interactive-element opacity-95 hover:opacity-100">
+    <motion.div 
+      variants={slideUp}
+      initial="initial"
+      animate="animate"
+      className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl shadow-sm hover:shadow-md dark:shadow-none p-5 flex items-center gap-6 group interactive-element opacity-95 hover:opacity-100 transition-all duration-300"
+    >
       <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
         <img 
           alt={title} 
@@ -33,16 +40,22 @@ export function TeacherCourseCard({ code, title, schedule, image, progress, stud
             <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${colorMap[color] || colorMap.blue}`}>
               {code}
             </span>
-            <h4 className="text-lg font-black text-on-surface mt-1 tracking-tight">{title}</h4>
-            <p className="text-sm text-on-surface-variant font-medium">{schedule}</p>
+            <h4 className="text-lg font-black text-slate-900 dark:text-white mt-1 tracking-tight">{title}</h4>
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{schedule}</p>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <motion.button 
+              {...buttonClickProps}
+              className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-blue-400 transition-colors"
+            >
               <Edit className="h-5 w-5" />
-            </button>
-            <button className="p-2 rounded-lg text-primary hover:bg-secondary-container transition-colors">
+            </motion.button>
+            <motion.button 
+              {...buttonClickProps}
+              className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-blue-400 transition-colors"
+            >
               <Eye className="h-5 w-5" />
-            </button>
+            </motion.button>
           </div>
         </div>
         <div className="mt-4 flex items-center justify-between">
@@ -70,6 +83,6 @@ export function TeacherCourseCard({ code, title, schedule, image, progress, stud
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
