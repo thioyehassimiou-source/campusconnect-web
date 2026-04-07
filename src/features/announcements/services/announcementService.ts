@@ -12,9 +12,10 @@ export const announcementService = {
         .select(`
           id, 
           title, 
+          summary,
           content,
           created_at, 
-          profiles:user_id(nom, full_name)
+          profiles:author_id(nom, full_name)
         `)
         .order('created_at', { ascending: false })
         .range(from, to)

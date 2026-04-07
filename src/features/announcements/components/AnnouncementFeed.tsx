@@ -52,7 +52,7 @@ export function AnnouncementFeed() {
               {announcement.title}
             </h5>
             <p className="text-xs text-on-surface-variant mt-2 line-clamp-2 font-medium">
-              {announcement.summary}
+              {announcement.summary || announcement.content}
             </p>
           </div>
         )) : (

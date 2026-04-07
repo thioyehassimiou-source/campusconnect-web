@@ -22,7 +22,7 @@ export async function getStudentGrades() {
   return (data || []).map((g: any) => ({
     id: g.id,
     student_id: user.id,
-    course_id: null,
+    course_id: '',
     grade: g.value,
     semester: g.semester,
     academic_year: '2024-2025',
