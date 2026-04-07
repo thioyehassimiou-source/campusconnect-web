@@ -116,10 +116,10 @@ export default async function Home() {
                   title: 'Sciences & Techniques (FST)', 
                   items: [
                     { name: 'Informatique', slug: 'informatique' }, 
-                    { name: 'Mathématiques', slug: 'mathematiques' }, 
-                    { name: 'Biologie', slug: 'biologie' }, 
+                    { name: 'Mathématiques Appliquées', slug: 'mathematiques-appliquees' }, 
+                    { name: 'Biologie & Environnement', slug: 'biologie' }, 
                     { name: 'MIAGE', slug: 'miage' }, 
-                    { name: 'Photovoltaïque', slug: 'photovoltaique' }
+                    { name: 'Énergie Photovoltaïque', slug: 'energie-photovoltaique' }
                   ] 
                 },
                 { 
@@ -128,15 +128,15 @@ export default async function Home() {
                     { name: 'Administration Publique', slug: 'administration-publique' }, 
                     { name: 'Économie', slug: 'economie' }, 
                     { name: 'Gestion', slug: 'gestion' }, 
-                    { name: 'Économie Sociale Familiale', slug: 'economie-sociale-familiale' }
+                    { name: 'Économie Sociale et Solidaire', slug: 'economie-sociale' }
                   ] 
                 },
                 { 
                   title: 'Lettres & Humaines (FLSH)', 
                   items: [
-                    { name: 'Sociologie & Anthropologie', slug: 'sociologie-anthropologie' },
-                    { name: 'Langue Anglaise', slug: 'langue-anglaise' },
-                    { name: 'Langue Arabe', slug: 'langue-arabe' },
+                    { name: 'Sociologie & Anthropologie', slug: 'sociologie' },
+                    { name: 'Langue Anglaise', slug: 'anglais' },
+                    { name: 'Langue Arabe', slug: 'arabe' },
                     { name: 'Lettres Modernes', slug: 'lettres-modernes' }
                   ] 
                 }
